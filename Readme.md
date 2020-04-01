@@ -1,7 +1,7 @@
 # Личный проект «Киноман» [![Build status][travis-image]][travis-url]
 
 * Студент: [Денис Тутов](https://up.htmlacademy.ru/ecmascript/11/user/111677).
-* Наставник: [Сергей Шершнев](https://up.htmlacademy.ru/ecmascript/11/user/587797)..
+* Наставник: [Сергей Шершнев](https://up.htmlacademy.ru/ecmascript/11/user/587797).
 
 ---
 
