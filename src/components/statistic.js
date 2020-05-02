@@ -1,9 +1,11 @@
-export const createStatistic = (statictic) => {
+import {createElement, formatTime} from "../utils";
+
+const createStatisticTemplate = (statictic) => {
 
   const {rank, watched, duration, genre} = statictic;
 
-  const hours = Math.floor(duration / 60);
-  const minutes = duration % 60;
+  const hours = formatTime(duration).hours;
+  const minutes = formatTime(duration).minutes;
 
   return (
     `<section class="statistic">
@@ -53,3 +55,26 @@ export const createStatistic = (statictic) => {
     </section>`
   );
 };
+
+export default class Statistic {
+  constructor(statictic) {
+    this._element = null;
+    this._statictic = statictic;
+  }
+
+  getTemplate() {
+    return createStatisticTemplate();
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate(this._statictic));
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
