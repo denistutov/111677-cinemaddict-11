@@ -12,6 +12,7 @@ import FilmStatistics from "./components/film-statistics";
 import FilmDetailsPopup from "./components/film-details";
 import Comment from "./components/comment";
 import Genre from "./components/genre";
+import EmptyFilmsBoard from "./components/empty-films-board";
 
 import {generateMenuButtons} from "./mock/main-nav";
 import {generateFilms} from "./mock/film-card";
@@ -24,8 +25,8 @@ const SHOWING_FILM_CARDS_COUNT_BY_BUTTON = 5;
 
 const pageBody = document.querySelector(`body`);
 const pageHeader = document.querySelector(`.header`);
-const footerStatistic = document.querySelector(`.footer__statistics`);
 const pageMain = document.querySelector(`.main`);
+const footerStatistic = document.querySelector(`.footer__statistics`);
 
 const renderNavigationMenu = () => {
   const navigationButtons = pageMain.querySelector(`.main-navigation__items`);
@@ -88,6 +89,12 @@ const renderFilmDetails = (filmDetailsComponent, card) => {
 
 
 const renderFilmCardsBoard = (filmsCardsComponent, cards) => {
+  if (cards.length === 0) {
+    filmsCardsComponent.getElement().innerHTML = ``;
+    render(filmsCardsComponent.getElement(), new EmptyFilmsBoard().getElement(), RenderPosition.BEFOREEND);
+    return;
+  }
+
   const filmsList = filmsCardsComponent.getElement().querySelector(`.films-list`);
   const filmsListContainer = filmsCardsComponent.getElement().querySelector(`.films-list__container`);
 
@@ -128,7 +135,8 @@ const renderFilmCardsExtra = (filmsCardsComponent, ratedCards, commentsCards) =>
   });
 };
 
-render(pageHeader, new UserRank(generateRating()), RenderPosition.BEFOREEND);
+
+render(pageHeader, new UserRank(generateRating()).getElement(), RenderPosition.BEFOREEND);
 render(pageMain, new MainNav().getElement(), RenderPosition.BEFOREEND);
 
 renderNavigationMenu();
