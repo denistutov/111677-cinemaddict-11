@@ -1,8 +1,9 @@
-export const createFilmCard = (film) => {
-  const {title, rating, releaseDate, duration, genres, poster, description, comments, isInWatchList, isWatched, isFavorite} = film;
+import {createElement, formatTime} from "../utils";
 
-  const hours = Math.floor(duration / 60);
-  const minutes = duration % 60;
+const createFilmCardTemplate = (film) => {
+  const {title, rating, releaseDate, duration, genres, poster, description, comments, isInWatchList, isWatched, isFavorite} = film;
+  const hours = formatTime(duration).hours;
+  const minutes = formatTime(duration).minutes;
 
   return (
     `<article class="film-card">
@@ -24,3 +25,27 @@ export const createFilmCard = (film) => {
     </article>`
   );
 };
+
+export default class FilmCard {
+  constructor(film) {
+    this._film = film;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFilmCardTemplate(this._film);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+
