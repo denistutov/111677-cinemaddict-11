@@ -1,7 +1,7 @@
 import {createElement} from "../utils";
 
-const createMenuButtonTemplate = (buttons) => {
-  const {name, id, active, count} = buttons;
+const createMenuButtonTemplate = (button) => {
+  const {name, id, active, count} = button;
   return `<a href="#${id}" class="main-navigation__item ${active ? `main-navigation__item--active` : ``}">
             ${name} ${count ? `<span class="main-navigation__item-count">${count}</span>` : ``}`;
 };

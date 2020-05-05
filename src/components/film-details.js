@@ -1,11 +1,17 @@
 import {createElement} from "../utils";
 
+const createGenreTemplate = (genre) => {
+  return `<span class="film-details__genre">${genre}</span>`;
+};
+
 const createFilmDetailsPopupTemplate = (film) => {
   const {
-    title, rating, releaseDate, duration, poster,
+    title, rating, releaseDate, duration, genres, poster,
     description, isInWatchList, isWatched, isFavorite,
     age, director, writers, actors, country, comments
   } = film;
+
+  const createGenresList = genres.map((genre) => createGenreTemplate(genre)).join(`\n`);
 
   return (
     `<section class="film-details">
@@ -60,7 +66,9 @@ const createFilmDetailsPopupTemplate = (film) => {
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Genres</td>
-                  <td class="film-details__cell film-details--genres"></td>
+                  <td class="film-details__cell">
+                    ${createGenresList}
+                  </td>
                 </tr>
               </table>
 
