@@ -1,22 +1,20 @@
 import {createElement} from "../utils";
 
-const createMainNavTemplate = () => {
+const createEmptyFilmsBoardTemplate = () => {
   return (
-    `<nav class="main-navigation">
-      <div class="main-navigation__items">
-      </div>
-      <a href="#stats" class="main-navigation__additional">Stats</a>
-    </nav>`
+    `<section class="films-list">
+        <h2 class="films-list__title">There are no movies in our database</h2>
+    </section>`
   );
 };
 
-export default class MainNav {
+export default class EmptyFilmsBoard {
   constructor() {
     this._element = null;
   }
 
   getTemplate() {
-    return createMainNavTemplate();
+    return createEmptyFilmsBoardTemplate();
   }
 
   getElement() {
