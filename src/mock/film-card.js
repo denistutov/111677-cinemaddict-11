@@ -1,6 +1,6 @@
-import {getRandomNumber} from "../utils";
-import {getRandomArrayItem} from "../utils";
-import {shuffleArray} from "../utils";
+import {getRandomNumber} from "../utils/common";
+import {getRandomArrayItem} from "../utils/common";
+import {shuffleArray} from "../utils/common";
 import {MONTH_NAMES} from "../const";
 
 const TITLES = [`The Dance of Life`, `Sagebrush Trail`, `The Man with the Golden Arm`, `Santa Claus Conquers the Martians`, `Popeye the Sailor Meets Sindbad the Sailor`];

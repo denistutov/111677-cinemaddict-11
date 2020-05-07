@@ -1,4 +1,5 @@
-import {createElement, formatTime} from "../utils";
+import {formatTime} from "../utils/common";
+import AbstractComponent from "./abstract-component";
 
 const createStatisticTemplate = (statictic) => {
 
@@ -56,25 +57,13 @@ const createStatisticTemplate = (statictic) => {
   );
 };
 
-export default class Statistic {
+export default class Statistic extends AbstractComponent {
   constructor(statictic) {
-    this._element = null;
+    super();
     this._statictic = statictic;
   }
 
   getTemplate() {
-    return createStatisticTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate(this._statictic));
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+    return createStatisticTemplate(this._statictic);
   }
 }

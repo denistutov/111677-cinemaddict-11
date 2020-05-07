@@ -1,4 +1,4 @@
-import {getRandomNumber} from "../utils";
+import {getRandomNumber} from "../utils/common";
 
 const USER_RATING = [`novice`, `fan`, `movie buff`];
 
