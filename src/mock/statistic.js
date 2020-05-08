@@ -1,5 +1,5 @@
-import {getRandomNumber} from "../utils";
-import {getRandomArrayItem} from "../utils";
+import {getRandomNumber} from "../utils/common";
+import {getRandomArrayItem} from "../utils/common";
 import {generateRating} from "./profile-rating";
 
 const GENRES = [`Musical`, `Western`, `Drama`, `Comedy`, `Cartoon`, `Mystery`];

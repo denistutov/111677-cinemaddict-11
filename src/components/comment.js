@@ -1,4 +1,4 @@
-import {createElement} from "../utils";
+import AbstractComponent from "./abstract-component";
 
 const createCommentTemplate = (comment) => {
   const {text, name, date, emoji} = comment;
@@ -20,25 +20,13 @@ const createCommentTemplate = (comment) => {
   );
 };
 
-export default class Comment {
+export default class Comment extends AbstractComponent {
   constructor(comment) {
+    super();
     this._film = comment;
-    this._element = null;
   }
 
   getTemplate() {
     return createCommentTemplate(this._film);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
