@@ -47,11 +47,7 @@ const generateFilm = () => {
   let rating = getRandomNumber(0, 10);
   rating = (rating === 10) ? rating : (rating + Math.random()).toFixed(1);
 
-  const year = getRandomNumber(1955, 2010);
-  const day = getRandomNumber(1, 28);
-  const month = getRandomArrayItem(MONTH_NAMES);
-  const releaseDate = `${day} ${month} ${year}`;
-
+  const releaseDate = getRandomNumber(1955, 2010);
   const commentsCount = getRandomNumber(0, 5);
 
   return {
