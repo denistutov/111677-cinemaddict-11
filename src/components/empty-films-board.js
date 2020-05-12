@@ -1,4 +1,4 @@
-import {createElement} from "../utils";
+import AbstractComponent from "./abstract-component";
 
 const createEmptyFilmsBoardTemplate = () => {
   return (
@@ -8,24 +8,8 @@ const createEmptyFilmsBoardTemplate = () => {
   );
 };
 
-export default class EmptyFilmsBoard {
-  constructor() {
-    this._element = null;
-  }
-
+export default class EmptyFilmsBoard extends AbstractComponent {
   getTemplate() {
     return createEmptyFilmsBoardTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
