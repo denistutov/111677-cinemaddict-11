@@ -1,19 +1,26 @@
-import {remove, render, RenderPosition} from "../utils/render";
-import Comment from "../components/comment";
+import {remove, render, replace, RenderPosition} from "../utils/render";
 import FilmDetailsPopup from "../components/film-details";
 import FilmCard from "../components/film-card";
 
+const Mode = {
+  OPEN: `open`,
+  CLOSE: `close`,
+};
+
 export default class MovieController {
-  constructor(container, onDataChange) {
+  constructor(container, onDataChange, onViewChange) {
     this._container = container;
 
     this._onDataChange = onDataChange;
+    this._onViewChange = onViewChange;
 
+    this._mode = Mode.CLOSE;
     this._filmDetailsPopupComponent = null;
     this._filmCardComponent = null;
   }
 
-  renderFilmCard(card) {
+  render(card) {
+    const oldFilmCardComponent = this._filmCardComponent;
     this._filmCardComponent = new FilmCard(card);
 
     const filmCardPosterHandler = () => {
@@ -37,18 +44,39 @@ export default class MovieController {
       this._onDataChange(this, card, Object.assign({}, card, {isFavorite: !card.isFavorite}));
     });
 
-    render(this._container, this._filmCardComponent, RenderPosition.BEFOREEND);
+    if (oldFilmCardComponent) {
+      replace(this._filmCardComponent, oldFilmCardComponent);
+    } else {
+      render(this._container, this._filmCardComponent, RenderPosition.BEFOREEND);
+    }
+  }
+
+  setDefaultView() {
+    if (this._mode !== Mode.CLOSE) {
+      remove(this._filmDetailsPopupComponent);
+      this._mode = Mode.CLOSE;
+    }
   }
 
   _renderFilmDetails(card) {
+    const pageBody = document.querySelector(`body`);
+    this._onViewChange();
+    this._mode = Mode.OPEN;
+
     this._filmDetailsPopupComponent = new FilmDetailsPopup(card);
 
-    const pageBody = document.querySelector(`body`);
     render(pageBody, this._filmDetailsPopupComponent, RenderPosition.BEFOREEND);
-    const commentList = this._filmDetailsPopupComponent.getElement().querySelector(`.film-details__comments-list`);
 
-    card.comments.forEach((comment) => {
-      render(commentList, new Comment(comment), RenderPosition.BEFOREEND);
+    this._filmDetailsPopupComponent.setAddToWatchlistClickHandler(() => {
+      this._onDataChange(this, card, Object.assign({}, card, {isInWatchList: !card.isInWatchList}));
+    });
+
+    this._filmDetailsPopupComponent.setMarkAsWatchedClickHandler(() => {
+      this._onDataChange(this, card, Object.assign({}, card, {isWatched: !card.isWatched}));
+    });
+
+    this._filmDetailsPopupComponent.setFavoriteClickHandler(() => {
+      this._onDataChange(this, card, Object.assign({}, card, {isFavorite: !card.isFavorite}));
     });
 
     const filmDetailsCloseButtonHandler = () => {
