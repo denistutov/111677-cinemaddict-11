@@ -16,12 +16,12 @@ const renderFilmCards = (cardListElement, cards, onDataChange, onViewChange) => 
   });
 };
 
-const renderFilmCardsExtra = (filmsCardsComponent, cards) => {
+const renderFilmCardsExtra = (filmsCardsComponent, cards, onDataChange, onViewChange) => {
   const cardsRatedContainer = filmsCardsComponent.getElement().querySelector(`.films-list__container--rated`);
   const cardsCommentedContainer = filmsCardsComponent.getElement().querySelector(`.films-list__container--commented`);
 
-  renderFilmCards(cardsRatedContainer, cards.slice(0, 2));
-  renderFilmCards(cardsCommentedContainer, cards.slice(0, 2));
+  renderFilmCards(cardsRatedContainer, cards.slice(4, 6), onDataChange, onViewChange);
+  renderFilmCards(cardsCommentedContainer, cards.slice(6, 8), onDataChange, onViewChange);
 };
 
 const getSortedFilmCards = (cards, sortType, from, to) => {
@@ -75,7 +75,7 @@ export default class CardsBoardController {
     this._showedFilmCardsControllers = this._showedFilmCardsControllers.concat(newFilmCards);
 
     this._renderShowMoreButton();
-    renderFilmCardsExtra(this._container, this._cards);
+    renderFilmCardsExtra(this._container, this._cards, this._onDataChange, this._onViewChange);
   }
 
   _renderShowMoreButton() {
