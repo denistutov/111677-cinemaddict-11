@@ -114,7 +114,6 @@ export default class CardsBoardController {
 
     this._cards = [].concat(this._cards.slice(0, index), newData, this._cards.slice(index + 1));
     cardController.render(this._cards[index]);
-    console.log(oldData, newData);
   }
 
   _onViewChange() {
