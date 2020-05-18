@@ -49,12 +49,16 @@ export default class MovieController {
     } else {
       render(this._container, this._filmCardComponent, RenderPosition.BEFOREEND);
     }
+
+    if (oldFilmCardComponent && this._mode === Mode.OPEN) {
+      remove(this._filmDetailsPopupComponent);
+      this._renderFilmDetails(card);
+    }
   }
 
   setDefaultView() {
     if (this._mode !== Mode.CLOSE) {
-      remove(this._filmDetailsPopupComponent);
-      this._mode = Mode.CLOSE;
+      this._closeFilmDetailsPopup();
     }
   }
 
@@ -80,7 +84,7 @@ export default class MovieController {
     });
 
     const filmDetailsCloseButtonHandler = () => {
-      remove(this._filmDetailsPopupComponent);
+      this._closeFilmDetailsPopup();
       this._filmDetailsPopupComponent.removeClickHandler(filmDetailsCloseButtonHandler);
     };
 
@@ -88,12 +92,17 @@ export default class MovieController {
       const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
 
       if (isEscKey) {
-        remove(this._filmDetailsPopupComponent);
+        this._closeFilmDetailsPopup();
         document.removeEventListener(`keydown`, onEscKeyDown);
       }
     };
 
     document.addEventListener(`keydown`, onEscKeyDown);
     this._filmDetailsPopupComponent.setClickHandler(filmDetailsCloseButtonHandler);
+  }
+
+  _closeFilmDetailsPopup() {
+    remove(this._filmDetailsPopupComponent);
+    this._mode = Mode.CLOSE;
   }
 }

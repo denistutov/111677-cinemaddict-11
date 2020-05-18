@@ -34,15 +34,8 @@ const formatDateComment = (date) => {
   }
 };
 
-const formatDate = (date, yearOnly) => {
-  if (yearOnly === true) {
-    return moment(date).format(`YYYY`);
-  }
-  return moment(date).format(`DD MMMM YYYY`);
-};
+const formatDate = (date, yearOnly) => moment(date).format(yearOnly ? `YYYY` : `DD MMMM YYYY`);
 
-const formatDuration = (minutes) => {
-  return moment.utc(moment.duration(minutes, `minutes`).asMilliseconds()).format(`h[h] m[m]`);
-};
+const formatDuration = (minutes) => moment.utc(moment.duration(minutes, `minutes`).asMilliseconds()).format(`h[h] m[m]`);
 
 export {getRandomNumber, getRandomArrayItem, shuffleArray, formatDate, formatDuration, formatDateComment};
