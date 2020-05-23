@@ -1,6 +1,7 @@
 import {remove, render, replace, RenderPosition} from "../utils/render";
 import FilmDetailsPopup from "../components/film-details";
 import FilmCard from "../components/film-card";
+import Comments from "../models/comments";
 
 const Mode = {
   OPEN: `open`,
@@ -14,12 +15,18 @@ export default class MovieController {
     this._onDataChange = onDataChange;
     this._onViewChange = onViewChange;
 
+    this._commentsModel = new Comments();
+
     this._mode = Mode.CLOSE;
     this._filmDetailsPopupComponent = null;
     this._filmCardComponent = null;
+
+    this._onFilmDetailsPopupKeydown = this._onFilmDetailsPopupKeydown.bind(this);
+    this._filmDetailsCloseButtonHandler = this._filmDetailsCloseButtonHandler.bind(this);
   }
 
   render(card) {
+    this._card = card;
     const oldFilmCardComponent = this._filmCardComponent;
     this._filmCardComponent = new FilmCard(card);
 
@@ -56,6 +63,10 @@ export default class MovieController {
     }
   }
 
+  destroy() {
+    remove(this._filmCardComponent);
+  }
+
   setDefaultView() {
     if (this._mode !== Mode.CLOSE) {
       this._closeFilmDetailsPopup();
@@ -68,6 +79,22 @@ export default class MovieController {
     this._mode = Mode.OPEN;
 
     this._filmDetailsPopupComponent = new FilmDetailsPopup(card);
+    this._filmDetailsPopupComponent.setClickHandler(this._filmDetailsCloseButtonHandler);
+
+    this._commentsModel.setComments(this._filmCardComponent._film.comments);
+
+    const addComment = (data) => {
+      this._commentsModel.addComment(data);
+      this._onDataChange(this, card, Object.assign({}, card, {comments: this._commentsModel.getComments()}));
+    };
+
+    const deleteComment = (data) => {
+      this._commentsModel.deleteComment(data);
+      this._onDataChange(this, card, Object.assign({}, card, {comments: this._commentsModel.getComments()}));
+    };
+
+    this._filmDetailsPopupComponent.setAddCommentHandler(addComment);
+    this._filmDetailsPopupComponent.setDeleteCommentHandler(deleteComment);
 
     render(pageBody, this._filmDetailsPopupComponent, RenderPosition.BEFOREEND);
 
@@ -83,26 +110,25 @@ export default class MovieController {
       this._onDataChange(this, card, Object.assign({}, card, {isFavorite: !card.isFavorite}));
     });
 
-    const filmDetailsCloseButtonHandler = () => {
-      this._closeFilmDetailsPopup();
-      this._filmDetailsPopupComponent.removeClickHandler(filmDetailsCloseButtonHandler);
-    };
-
-    const onEscKeyDown = (evt) => {
-      const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
-
-      if (isEscKey) {
-        this._closeFilmDetailsPopup();
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      }
-    };
-
-    document.addEventListener(`keydown`, onEscKeyDown);
-    this._filmDetailsPopupComponent.setClickHandler(filmDetailsCloseButtonHandler);
+    document.addEventListener(`keydown`, this._onFilmDetailsPopupKeydown);
   }
 
   _closeFilmDetailsPopup() {
     remove(this._filmDetailsPopupComponent);
     this._mode = Mode.CLOSE;
+  }
+
+  _filmDetailsCloseButtonHandler() {
+    this._closeFilmDetailsPopup();
+    this._filmDetailsPopupComponent.removeClickHandler(this._filmDetailsCloseButtonHandler);
+  }
+
+  _onFilmDetailsPopupKeydown(evt) {
+    const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
+
+    if (isEscKey) {
+      this._closeFilmDetailsPopup();
+      document.removeEventListener(`keydown`, this._onFilmDetailsPopupKeydown);
+    }
   }
 }
