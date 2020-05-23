@@ -1,10 +1,36 @@
-import AbstractComponent from "./abstract-component";
+import AbstractSmartComponent from "./abstract-smart-component";
+import {formatDateComment} from "../utils/common";
+import {encode} from "he";
 
 const createGenreTemplate = (genre) => {
   return `<span class="film-details__genre">${genre}</span>`;
 };
 
-const createFilmDetailsPopupTemplate = (film) => {
+const createEmojiTemplate = (emoji) => {
+  return `<img src="./images/emoji/${emoji}.png" width="55" height="55" alt="emoji">`;
+};
+
+const createCommentTemplate = (comment) => {
+  const {id, text, name, date, emoji} = comment;
+
+  return (
+    `<li class="film-details__comment">
+      <span class="film-details__comment-emoji">
+        <img src="./images/emoji/${emoji}.png" width="55" height="55" alt="emoji-smile">
+      </span>
+      <div>
+        <p class="film-details__comment-text">${text}</p>
+        <p class="film-details__comment-info">
+          <span class="film-details__comment-author">${name}</span>
+          <span class="film-details__comment-day">${date}</span>
+          <button id="${id}" class="film-details__comment-delete">Delete</button>
+        </p>
+      </div>
+    </li>`
+  );
+};
+
+const createFilmDetailsPopupTemplate = (film, emoji, message) => {
   const {
     title, rating, releaseDate, duration, genres, poster,
     description, isInWatchList, isWatched, isFavorite,
@@ -12,6 +38,8 @@ const createFilmDetailsPopupTemplate = (film) => {
   } = film;
 
   const createGenresList = genres.map((genre) => createGenreTemplate(genre)).join(`\n`);
+  const createCommentList = comments.map((comment) => createCommentTemplate(comment)).join(`\n`);
+  const createEmoji = createEmojiTemplate(emoji);
 
   return (
     `<section class="film-details">
@@ -94,14 +122,13 @@ const createFilmDetailsPopupTemplate = (film) => {
           <section class="film-details__comments-wrap">
             <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
 
-        <ul class="film-details__comments-list">
-        </ul>
+        <ul class="film-details__comments-list">${createCommentList}</ul>
 
         <div class="film-details__new-comment">
-          <div for="add-emoji" class="film-details__add-emoji-label"></div>
+          <div for="add-emoji" class="film-details__add-emoji-label">${emoji ? createEmoji : ``}</div>
 
           <label class="film-details__comment-label">
-            <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+            <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${message ? message : ``}</textarea>
           </label>
 
           <div class="film-details__emoji-list">
@@ -133,21 +160,109 @@ const createFilmDetailsPopupTemplate = (film) => {
   );
 };
 
-export default class FilmDetailsPopup extends AbstractComponent {
+export default class FilmDetailsPopup extends AbstractSmartComponent {
   constructor(film) {
     super();
     this._film = film;
+    this._emoji = null;
+    this._closeHandler = null;
+    this._message = null;
+
+    this._setAddCommentHandler = null;
+
+    this._subscribeOnEvents();
+    this._parseNewComment = this._parseNewComment.bind(this);
+  }
+
+  recoveryListeners() {
+    this.setClickHandler(this._closeHandler);
+    this._subscribeOnEvents();
+
+    this.setAddToWatchlistClickHandler(this._addToWatchlistHandler);
+    this.setMarkAsWatchedClickHandler(this._markAsWatchedHandler);
+    this.setFavoriteClickHandler(this._addFavoriteHandler);
+    this.setAddCommentHandler(this._setAddCommentHandler);
+  }
+
+  rerender() {
+    super.rerender();
   }
 
   getTemplate() {
-    return createFilmDetailsPopupTemplate(this._film);
+    return createFilmDetailsPopupTemplate(this._film, this._emoji, this._message);
   }
 
   setClickHandler(handler) {
     this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, handler);
+
+    this._closeHandler = handler;
   }
 
   removeClickHandler(handler) {
     this.getElement().querySelector(`.film-details__close-btn`).removeEventListener(`click`, handler);
+  }
+
+  setAddToWatchlistClickHandler(handler) {
+    this.getElement().querySelector(`.film-details__control-label--watchlist`).addEventListener(`click`, handler);
+
+    this._addToWatchlistHandler = handler;
+  }
+
+  setMarkAsWatchedClickHandler(handler) {
+    this.getElement().querySelector(`.film-details__control-label--watched`).addEventListener(`click`, handler);
+
+    this._markAsWatchedHandler = handler;
+  }
+
+  setFavoriteClickHandler(handler) {
+    this.getElement().querySelector(`.film-details__control-label--favorite`).addEventListener(`click`, handler);
+
+    this._addFavoriteHandler = handler;
+  }
+
+  _subscribeOnEvents() {
+    const element = this.getElement();
+
+    element.querySelectorAll(`.film-details__emoji-item`).
+    forEach((item) => {
+      item.addEventListener(`click`, () => {
+        this._emoji = item.value;
+        this.rerender();
+      });
+    });
+
+    const message = element.querySelector(`.film-details__comment-input`);
+    message.addEventListener(`input`, () => {
+      this._message = message.value;
+    });
+  }
+
+  setAddCommentHandler(handler) {
+    this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`keydown`, (evt) => {
+      if (evt.target.value !== `` && evt.key === `Enter`) {
+        handler(this._parseNewComment());
+      }
+    });
+
+    this._setAddCommentHandler = handler;
+  }
+
+  setDeleteCommentHandler(handler) {
+    this.getElement().querySelectorAll(`.film-details__comment-delete`).forEach((button) => {
+      button.addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        handler(button.id);
+      });
+    });
+  }
+
+  _parseNewComment() {
+    return {
+      id: String(new Date() + Math.random()),
+      text: encode(this._message),
+      name: `John Doe`,
+      date: formatDateComment(new Date()),
+      emoji: this._emoji || `smile`,
+    };
   }
 }

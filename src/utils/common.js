@@ -1,6 +1,6 @@
-const getRandomNumber = (min, max) => {
-  return min + Math.floor(Math.random() * (max - min));
-};
+import moment from "moment";
+
+const getRandomNumber = (min, max) => min + Math.floor(Math.random() * (max - min));
 
 const getRandomArrayItem = (array) => {
   const randomIndex = getRandomNumber(0, array.length);
@@ -20,11 +20,21 @@ function shuffleArray(array) {
   return array;
 }
 
-function formatTime(duration) {
-  const hours = Math.floor(duration / 60);
-  const minutes = duration % 60;
+const formatDateComment = (date) => {
+  const daysForString = 7;
+  const daysDiff = moment().diff(date, `days`);
 
-  return {hours, minutes};
-}
+  if (daysDiff > daysForString) {
+    return moment(date).format(`YYYY/MM/DD HH:MM`);
+  } else {
+    return moment(date).toNow();
+  }
+};
 
-export {getRandomNumber, getRandomArrayItem, shuffleArray, formatTime};
+const getFirstSymbolUpperCase = (filterName) => filterName.charAt(0).toUpperCase() + filterName.substr(1);
+
+const formatDate = (date, yearOnly) => moment(date).format(yearOnly ? `YYYY` : `DD MMMM YYYY`);
+
+const formatDuration = (minutes) => moment.utc(moment.duration(minutes, `minutes`).asMilliseconds()).format(`h[h] m[m]`);
+
+export {getRandomNumber, getRandomArrayItem, shuffleArray, formatDate, formatDuration, formatDateComment, getFirstSymbolUpperCase};

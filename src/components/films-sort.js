@@ -48,6 +48,25 @@ export default class FilmsSort extends AbstractComponent {
       this._currenSortType = sortType;
 
       handler(this._currenSortType);
+      this._changeActiveSortButton(evt.target);
     });
+  }
+
+  setDefaultView() {
+    const buttons = this.getElement().querySelectorAll(`.sort__button`);
+    buttons.forEach((button) => {
+      button.classList.remove(`sort__button--active`);
+    });
+
+    buttons[0].classList.add(`sort__button--active`);
+    this._currenSortType = SortType.DEFAULT;
+  }
+
+  _changeActiveSortButton(target) {
+    this.getElement().querySelectorAll(`.sort__button`).forEach((button) => {
+      button.classList.remove(`sort__button--active`);
+    });
+
+    target.classList.add(`sort__button--active`);
   }
 }

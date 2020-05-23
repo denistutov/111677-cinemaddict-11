@@ -1,7 +1,4 @@
-import {getRandomNumber} from "../utils/common";
-import {getRandomArrayItem} from "../utils/common";
-import {shuffleArray} from "../utils/common";
-import {MONTH_NAMES} from "../const";
+import {getRandomNumber, getRandomArrayItem, shuffleArray, formatDuration, formatDate, formatDateComment} from "../utils/common";
 
 const TITLES = [`The Dance of Life`, `Sagebrush Trail`, `The Man with the Golden Arm`, `Santa Claus Conquers the Martians`, `Popeye the Sailor Meets Sindbad the Sailor`];
 const POSTERS = [`made-for-each-other.png`, `popeye-meets-sinbad.png`, `sagebrush-trail.jpg`, `santa-claus-conquers-the-martians.jpg`, `the-dance-of-life.jpg`, `the-great-flamarion.jpg`, `the-man-with-the-golden-arm.jpg`];
@@ -22,17 +19,22 @@ const AGE_RATINGS = [`12+`, `16+`, `18+`];
 const COMMENTS_TEXTS = [`Interesting setting and a good cast`, `Booooooooooring`, `Very very old. Meh`, `Almost two hours? Seriously?`];
 const EMOJI = [`smile`, `sleeping`, `puke`, `angry`];
 
-const generateComment = () => {
-  const year = getRandomNumber(2018, 2020);
+const generateRandomDate = (yearFrom, yearTo) => {
+  const year = getRandomNumber(yearFrom, yearTo);
   const day = getRandomNumber(1, 28);
-  const month = getRandomArrayItem(MONTH_NAMES);
+  const month = getRandomNumber(1, 12);
   const hour = getRandomNumber(1, 23);
   const minutes = getRandomNumber(1, 59);
-  const date = `${year}/${month}/${day}  ${hour}:${minutes}`;
+
+  return new Date(year, month, day, hour, minutes);
+};
+
+const generateComment = () => {
   return {
+    id: String(new Date() + Math.random()),
     text: getRandomArrayItem(COMMENTS_TEXTS),
     name: `John Doe`,
-    date,
+    date: formatDateComment(generateRandomDate(2020, 2020)),
     emoji: getRandomArrayItem(EMOJI),
   };
 };
@@ -47,14 +49,16 @@ const generateFilm = () => {
   let rating = getRandomNumber(0, 10);
   rating = (rating === 10) ? rating : (rating + Math.random()).toFixed(1);
 
-  const releaseDate = getRandomNumber(1955, 2010);
+  const randomYear = generateRandomDate(1955, 2020);
   const commentsCount = getRandomNumber(0, 5);
 
   return {
+    id: String(new Date() + Math.random()),
     title: getRandomArrayItem(TITLES),
     rating,
-    releaseDate,
-    duration: getRandomNumber(50, 180),
+    releaseDate: formatDate(randomYear),
+    releaseYear: formatDate(randomYear, true),
+    duration: formatDuration(getRandomNumber(60, 120)),
     genres: shuffleArray(GENRES).slice(0, getRandomNumber(1, 3)),
     poster: `./images/posters/${getRandomArrayItem(POSTERS)}`,
     description: shuffleArray(DESCRIPTIONS).slice(0, 5).join(``),
