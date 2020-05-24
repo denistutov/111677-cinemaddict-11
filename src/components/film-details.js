@@ -1,15 +1,16 @@
 import AbstractSmartComponent from "./abstract-smart-component";
+import {encode} from "he";
 
 const createGenreTemplate = (genre) => {
   return `<span class="film-details__genre">${genre}</span>`;
 };
 
 const createEmojiTemplate = (emoji) => {
-  return `<img src="./images/emoji/${emoji}.png" width="100%" height="100%" alt="emoji">`;
+  return `<img src="./images/emoji/${emoji}.png" width="55" height="55" alt="emoji">`;
 };
 
 const createCommentTemplate = (comment) => {
-  const {text, name, date, emoji} = comment;
+  const {id, text, name, date, emoji} = comment;
 
   return (
     `<li class="film-details__comment">
@@ -21,7 +22,7 @@ const createCommentTemplate = (comment) => {
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${name}</span>
           <span class="film-details__comment-day">${date}</span>
-          <button class="film-details__comment-delete">Delete</button>
+          <button id="${id}" class="film-details__comment-delete">Delete</button>
         </p>
       </div>
     </li>`
@@ -166,6 +167,8 @@ export default class FilmDetailsPopup extends AbstractSmartComponent {
     this._closeHandler = null;
     this._message = null;
 
+    this._setAddCommentHandler = null;
+
     this._subscribeOnEvents();
   }
 
@@ -176,6 +179,7 @@ export default class FilmDetailsPopup extends AbstractSmartComponent {
     this.setAddToWatchlistClickHandler(this._addToWatchlistHandler);
     this.setMarkAsWatchedClickHandler(this._markAsWatchedHandler);
     this.setFavoriteClickHandler(this._addFavoriteHandler);
+    this.setAddCommentHandler(this._setAddCommentHandler);
   }
 
   rerender() {
@@ -228,6 +232,29 @@ export default class FilmDetailsPopup extends AbstractSmartComponent {
     const message = element.querySelector(`.film-details__comment-input`);
     message.addEventListener(`input`, () => {
       this._message = message.value;
+    });
+  }
+
+  setAddCommentHandler(handler) {
+    this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`keydown`, (evt) => {
+      if (evt.target.value !== `` && evt.key === `Enter`) {
+        const form = this.getElement().querySelector(`.film-details__inner`);
+        const formData = new FormData(form);
+        formData.append(`emoji`, this._emoji || `smile`);
+        formData.append(`text`, encode(this._message));
+        handler(formData);
+      }
+    });
+
+    this._setAddCommentHandler = handler;
+  }
+
+  setDeleteCommentHandler(handler) {
+    this.getElement().querySelectorAll(`.film-details__comment-delete`).forEach((button) => {
+      button.addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        handler(button.id);
+      });
     });
   }
 }

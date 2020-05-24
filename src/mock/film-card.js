@@ -31,6 +31,7 @@ const generateRandomDate = (yearFrom, yearTo) => {
 
 const generateComment = () => {
   return {
+    id: String(new Date() + Math.random()),
     text: getRandomArrayItem(COMMENTS_TEXTS),
     name: `John Doe`,
     date: formatDateComment(generateRandomDate(2020, 2020)),
@@ -52,6 +53,7 @@ const generateFilm = () => {
   const commentsCount = getRandomNumber(0, 5);
 
   return {
+    id: String(new Date() + Math.random()),
     title: getRandomArrayItem(TITLES),
     rating,
     releaseDate: formatDate(randomYear),

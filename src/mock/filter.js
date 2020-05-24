@@ -1,6 +1,6 @@
 import {getRandomNumber} from "../utils/common";
 
-const menuList = [
+const filterList = [
   {
     name: `All movies`,
     id: `all`,
@@ -26,8 +26,8 @@ const menuList = [
     count: getRandomNumber(0, 10)
   }];
 
-const generateMenuButtons = () => {
-  return menuList;
+const generateFilterButtons = () => {
+  return filterList;
 };
 
-export {generateMenuButtons};
+export {generateFilterButtons};
