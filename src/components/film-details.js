@@ -1,5 +1,4 @@
 import AbstractSmartComponent from "./abstract-smart-component";
-import {formatDateComment} from "../utils/common";
 import {encode} from "he";
 
 const createGenreTemplate = (genre) => {
@@ -171,7 +170,6 @@ export default class FilmDetailsPopup extends AbstractSmartComponent {
     this._setAddCommentHandler = null;
 
     this._subscribeOnEvents();
-    this._parseNewComment = this._parseNewComment.bind(this);
   }
 
   recoveryListeners() {
@@ -240,7 +238,11 @@ export default class FilmDetailsPopup extends AbstractSmartComponent {
   setAddCommentHandler(handler) {
     this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`keydown`, (evt) => {
       if (evt.target.value !== `` && evt.key === `Enter`) {
-        handler(this._parseNewComment());
+        const form = this.getElement().querySelector(`.film-details__inner`);
+        const formData = new FormData(form);
+        formData.append(`emoji`, this._emoji || `smile`);
+        formData.append(`text`, encode(this._message));
+        handler(formData);
       }
     });
 
@@ -254,15 +256,5 @@ export default class FilmDetailsPopup extends AbstractSmartComponent {
         handler(button.id);
       });
     });
-  }
-
-  _parseNewComment() {
-    return {
-      id: String(new Date() + Math.random()),
-      text: encode(this._message),
-      name: `John Doe`,
-      date: formatDateComment(new Date()),
-      emoji: this._emoji || `smile`,
-    };
   }
 }

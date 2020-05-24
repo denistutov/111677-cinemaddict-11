@@ -1,4 +1,5 @@
 import {remove, render, replace, RenderPosition} from "../utils/render";
+import {formatDateComment} from "../utils/common";
 import FilmDetailsPopup from "../components/film-details";
 import FilmCard from "../components/film-card";
 import Comments from "../models/comments";
@@ -23,6 +24,7 @@ export default class MovieController {
 
     this._onFilmDetailsPopupKeydown = this._onFilmDetailsPopupKeydown.bind(this);
     this._filmDetailsCloseButtonHandler = this._filmDetailsCloseButtonHandler.bind(this);
+    this._parseNewComment = this._parseNewComment.bind(this);
   }
 
   render(card) {
@@ -84,7 +86,8 @@ export default class MovieController {
     this._commentsModel.setComments(this._filmCardComponent._film.comments);
 
     const addComment = (data) => {
-      this._commentsModel.addComment(data);
+      const newComment = this._parseNewComment(data);
+      this._commentsModel.addComment(newComment);
       this._onDataChange(this, card, Object.assign({}, card, {comments: this._commentsModel.getComments()}));
     };
 
@@ -111,6 +114,16 @@ export default class MovieController {
     });
 
     document.addEventListener(`keydown`, this._onFilmDetailsPopupKeydown);
+  }
+
+  _parseNewComment(formData) {
+    return {
+      id: String(new Date() + Math.random()),
+      text: formData.get(`message`),
+      name: `John Doe`,
+      date: formatDateComment(new Date()),
+      emoji: formData.get(`emoji`),
+    };
   }
 
   _closeFilmDetailsPopup() {

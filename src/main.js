@@ -25,10 +25,10 @@ const filmsCardsComponent = new FilmListContainer();
 const sortFilmsComponent = new FilmsSort();
 const filmStatisticsComponent = new FilmStatistics(filmCards);
 
+render(pageMain, sortFilmsComponent, RenderPosition.BEFOREEND);
 render(pageHeader, pageHeaderComponent, RenderPosition.BEFOREEND);
 filterComponent.render();
 render(pageMain, filmsCardsComponent, RenderPosition.BEFOREEND);
-render(pageMain, sortFilmsComponent, RenderPosition.AFTERBEGIN);
 
 const renderCardsBoard = new CardsBoardController(filmsCardsComponent, sortFilmsComponent, moviesModel);
 renderCardsBoard.render(filmCards);
