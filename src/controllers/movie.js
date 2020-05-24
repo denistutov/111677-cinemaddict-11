@@ -119,7 +119,7 @@ export default class MovieController {
   _parseNewComment(formData) {
     return {
       id: String(new Date() + Math.random()),
-      text: formData.get(`message`),
+      text: formData.get(`text`),
       name: `John Doe`,
       date: formatDateComment(new Date()),
       emoji: formData.get(`emoji`),
