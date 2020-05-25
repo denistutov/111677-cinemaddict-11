@@ -10,11 +10,13 @@ export default class FilterController {
 
     this._activeFilterType = FilterType.ALL;
     this._filterComponent = null;
-    this._statiscticHandler = null;
+    this._statiscticButtonClickHandler = [];
+    this._filterChangeHandlers = [];
 
     this._onDataChange = this._onDataChange.bind(this);
     this._onFilterChange = this._onFilterChange.bind(this);
-    this.setStatisticHandler = this.setStatisticHandler.bind(this);
+    this.addStatisticsButtonClickHandler = this.addStatisticsButtonClickHandler.bind(this);
+    this.addFilterChangeHandler = this.addFilterChangeHandler.bind(this);
 
     this._movieModel.setDataChangeHandler(this._onDataChange);
   }
@@ -33,7 +35,9 @@ export default class FilterController {
 
     this._filterComponent = new Filter(filters);
     this._filterComponent.setFilterChangeHandler(this._onFilterChange);
-    this._filterComponent.setStatisticsClickHandler(this._statiscticHandler);
+    this._filterComponent.setStatisticsClickHandler(() => {
+      this._statiscticButtonClickHandler.forEach((handler) => handler());
+    });
 
     if (oldComponent) {
       replace(this._filterComponent, oldComponent);
@@ -50,10 +54,16 @@ export default class FilterController {
     this._movieModel.setFilter(filterType);
     this._activeFilterType = filterType;
     this.render();
+
+    this._filterChangeHandlers.forEach((handler) => handler());
   }
 
-  setStatisticHandler(handler) {
-    this._statiscticHandler = handler;
+  addStatisticsButtonClickHandler(handler) {
+    this._statiscticButtonClickHandler.push(handler);
+  }
+
+  addFilterChangeHandler(handler) {
+    this._filterChangeHandlers.push(handler);
   }
 
   _onDataChange() {
