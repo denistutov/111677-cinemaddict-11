@@ -20,7 +20,6 @@ export default class MovieController {
     this._onViewChange = onViewChange;
 
     this._commentsModel = new Comments();
-    this._api = new API(AUTHORIZATION);
 
     this._mode = Mode.CLOSE;
     this._filmDetailsPopupComponent = null;
@@ -28,6 +27,7 @@ export default class MovieController {
 
     this._onFilmDetailsPopupKeydown = this._onFilmDetailsPopupKeydown.bind(this);
     this._filmDetailsCloseButtonHandler = this._filmDetailsCloseButtonHandler.bind(this);
+    this._parseComments = this._parseComments.bind(this);
     this._parseNewComment = this._parseNewComment.bind(this);
   }
 
@@ -82,14 +82,10 @@ export default class MovieController {
     const pageBody = document.querySelector(`body`);
     this._onViewChange();
     this._mode = Mode.OPEN;
-    card.comments.forEach((comment) => {
-      console.log(this._api.getComments(comment));
-    });
+    this._api = new API(AUTHORIZATION);
 
-    this._filmDetailsPopupComponent = new FilmDetailsPopup(card);
+    this._filmDetailsPopupComponent = new FilmDetailsPopup(card, this._parseComments(card.id));
     this._filmDetailsPopupComponent.setClickHandler(this._filmDetailsCloseButtonHandler);
-
-    this._commentsModel.setComments(this._filmCardComponent._film.comments);
 
     const addComment = (data) => {
       const newComment = this._parseNewComment(data);
@@ -120,6 +116,16 @@ export default class MovieController {
     });
 
     document.addEventListener(`keydown`, this._onFilmDetailsPopupKeydown);
+  }
+
+  _parseComments(id) {
+    this._api.getComments(id)
+      .then((comments) => {
+        const parseComments = this._commentsModel.parseComments(comments);
+        this._commentsModel.setComments(parseComments);
+      });
+
+    return this._commentsModel.getComments();
   }
 
   _parseNewComment(formData) {

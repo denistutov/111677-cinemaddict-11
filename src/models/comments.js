@@ -1,3 +1,5 @@
+import {formatDateComment} from "../utils/common";
+
 export default class Comments {
   constructor() {
     this._comments = [];
@@ -32,7 +34,7 @@ export default class Comments {
         id: comment[`id`],
         text: comment[`comment`],
         name: comment[`author`],
-        date: new Date(comment[`date`]),
+        date: formatDateComment(new Date(comment[`date`])),
         emoji: comment[`emotion`],
       };
     });
