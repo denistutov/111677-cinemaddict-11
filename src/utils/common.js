@@ -31,10 +31,41 @@ const formatDateComment = (date) => {
   }
 };
 
+const sortObject = (list) => {
+  let sortable = [];
+  for (let key in list) {
+    if (Object.prototype.hasOwnProperty.call(list, key)) {
+      sortable.push([key, list[key]]);
+    }
+  }
+
+  sortable.sort(function (a, b) {
+    if (a[1] > b[1]) {
+      return -1;
+    } else {
+      if (a[1] > b[1]) {
+        return 1;
+      } else {
+        return 0;
+      }
+    }
+  });
+
+  let orderedList = {};
+  for (let idx in sortable) {
+    if (Object.prototype.hasOwnProperty.call(sortable, idx)) {
+      orderedList[sortable[idx][0]] = sortable[idx][1];
+    }
+  }
+
+  return orderedList;
+};
+
 const getFirstSymbolUpperCase = (filterName) => filterName.charAt(0).toUpperCase() + filterName.substr(1);
 
 const formatDate = (date, yearOnly) => moment(date).format(yearOnly ? `YYYY` : `DD MMMM YYYY`);
 
 const formatDuration = (minutes) => moment.utc(moment.duration(minutes, `minutes`).asMilliseconds()).format(`h[h] m[m]`);
 
-export {getRandomNumber, getRandomArrayItem, shuffleArray, formatDate, formatDuration, formatDateComment, getFirstSymbolUpperCase};
+export {getRandomNumber, getRandomArrayItem, shuffleArray,
+  formatDate, formatDuration, formatDateComment, getFirstSymbolUpperCase, sortObject};

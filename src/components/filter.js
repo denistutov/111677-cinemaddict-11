@@ -11,8 +11,7 @@ const createFilterButtonTemplate = (button) => {
 };
 
 const createFilterTemplate = (buttons) => {
-
-  const createMenuButtons = buttons.map((genre) => createFilterButtonTemplate(genre)).join(`\n`);
+  const createMenuButtons = buttons.map((button) => createFilterButtonTemplate(button)).join(`\n`);
 
   return (
     `<nav class="main-navigation">

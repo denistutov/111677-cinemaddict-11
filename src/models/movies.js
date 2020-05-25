@@ -1,5 +1,9 @@
-import {FilterType} from "../const";
+import {FilterType, StatsFilter} from "../const";
+import {sortObject, formatDuration} from "../utils/common";
 import {getMoviesByFilter} from "../utils/filter";
+
+const NEED_FILMS_FOR_RANK_FAN = 20;
+const NEED_FILMS_FOR_RANK_NOVICE = 10;
 
 export default class Movies {
   constructor() {
@@ -52,5 +56,81 @@ export default class Movies {
 
   _callHandlers(handlers) {
     handlers.forEach((handler) => handler());
+  }
+
+  getFilmsByWatched(periodName = StatsFilter.ALL_TIME) {
+    let filmsInWatchList = this._films.filter((film) => film.isInWatchList);
+
+    if (periodName === StatsFilter.ALL_TIME) {
+      return filmsInWatchList;
+    }
+
+    const date = new Date();
+
+    switch (periodName) {
+      case StatsFilter.YEAR:
+        date.setFullYear(date.getFullYear() - 1);
+        break;
+      case StatsFilter.MONTH:
+        date.setMonth(date.getMonth() - 1);
+        break;
+      case StatsFilter.WEEK:
+        date.setDate(date.getDate() - 7);
+        break;
+      case StatsFilter.TODAY:
+        date.setDate(date.getDate() - 1);
+        break;
+      default:
+        return filmsInWatchList;
+    }
+
+    return filmsInWatchList.filter((item) => {
+      return item.watchingDate > date;
+    });
+  }
+
+  getRank() {
+    const watchedCount = this.getFilmsByWatched().length;
+
+    if (watchedCount > NEED_FILMS_FOR_RANK_FAN) {
+      return `movie buff`;
+    } else if (watchedCount > NEED_FILMS_FOR_RANK_NOVICE) {
+      return `fan`;
+    } else if (watchedCount > 0) {
+      return `novice`;
+    }
+    return ``;
+  }
+
+  getGenresStatistics(filter) {
+    let genres = {};
+
+    this.getFilmsByWatched(filter).forEach((film) => {
+      film.genres.forEach((genre) => {
+        genres[genre] = genres[genre] === undefined ? 1 : genres[genre] + 1;
+      });
+    });
+
+    return sortObject(genres);
+  }
+
+  getTopGenre(filter) {
+    const genres = this.getGenresStatistics(filter);
+
+    return Object.keys(genres).reduce((topGenre, genre) => {
+      if (topGenre === ``) {
+        return genre;
+      }
+
+      return genres[genre] > genres[topGenre] ? genre : topGenre;
+    }, ``);
+  }
+
+  getTopDuration(filter) {
+    const topDuration = this.getFilmsByWatched(filter).reduce((total, film) => {
+      return total + film.duration;
+    }, 0);
+
+    return formatDuration(topDuration);
   }
 }

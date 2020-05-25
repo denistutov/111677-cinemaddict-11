@@ -10,9 +10,9 @@ const createUserRankTemplate = (rating) => {
 };
 
 export default class UserRank extends AbstractComponent {
-  constructor(rating) {
+  constructor(movieModel) {
     super();
-    this._rating = rating;
+    this._rating = movieModel.getRank();
   }
 
   getTemplate() {

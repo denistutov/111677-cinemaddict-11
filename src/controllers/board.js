@@ -157,4 +157,12 @@ export default class CardsBoardController {
     remove(this._showMoreButtonComponent);
     this._renderShowMoreButton(this._cards);
   }
+
+  hide() {
+    this._container.hide();
+  }
+
+  show() {
+    this._container.show();
+  }
 }

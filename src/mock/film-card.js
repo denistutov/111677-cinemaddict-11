@@ -1,4 +1,4 @@
-import {getRandomNumber, getRandomArrayItem, shuffleArray, formatDuration, formatDate, formatDateComment} from "../utils/common";
+import {getRandomNumber, getRandomArrayItem, shuffleArray, formatDate, formatDateComment} from "../utils/common";
 
 const TITLES = [`The Dance of Life`, `Sagebrush Trail`, `The Man with the Golden Arm`, `Santa Claus Conquers the Martians`, `Popeye the Sailor Meets Sindbad the Sailor`];
 const POSTERS = [`made-for-each-other.png`, `popeye-meets-sinbad.png`, `sagebrush-trail.jpg`, `santa-claus-conquers-the-martians.jpg`, `the-dance-of-life.jpg`, `the-great-flamarion.jpg`, `the-man-with-the-golden-arm.jpg`];
@@ -51,6 +51,7 @@ const generateFilm = () => {
 
   const randomYear = generateRandomDate(1955, 2020);
   const commentsCount = getRandomNumber(0, 5);
+  let isInWatchList = Math.random() > 0.5;
 
   return {
     id: String(new Date() + Math.random()),
@@ -58,13 +59,14 @@ const generateFilm = () => {
     rating,
     releaseDate: formatDate(randomYear),
     releaseYear: formatDate(randomYear, true),
-    duration: formatDuration(getRandomNumber(60, 120)),
+    duration: getRandomNumber(60, 120),
     genres: shuffleArray(GENRES).slice(0, getRandomNumber(1, 3)),
     poster: `./images/posters/${getRandomArrayItem(POSTERS)}`,
     description: shuffleArray(DESCRIPTIONS).slice(0, 5).join(``),
     comments: generateComments(commentsCount),
     isWatched: Math.random() > 0.5,
-    isInWatchList: Math.random() > 0.5,
+    isInWatchList,
+    watchingDate: isInWatchList ? generateRandomDate(2019, 2020) : false,
     isFavorite: Math.random() > 0.5,
     age: getRandomArrayItem(AGE_RATINGS),
     director: `Anthony Mann`,

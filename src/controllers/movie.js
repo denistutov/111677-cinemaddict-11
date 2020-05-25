@@ -28,7 +28,6 @@ export default class MovieController {
   }
 
   render(card) {
-    this._card = card;
     const oldFilmCardComponent = this._filmCardComponent;
     this._filmCardComponent = new FilmCard(card);
 
