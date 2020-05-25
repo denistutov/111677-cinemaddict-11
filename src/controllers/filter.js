@@ -10,11 +10,11 @@ export default class FilterController {
 
     this._activeFilterType = FilterType.ALL;
     this._filterComponent = null;
-
-    this._onFilterClickHandlers = [];
+    this._statiscticHandler = null;
 
     this._onDataChange = this._onDataChange.bind(this);
     this._onFilterChange = this._onFilterChange.bind(this);
+    this.setStatisticHandler = this.setStatisticHandler.bind(this);
 
     this._movieModel.setDataChangeHandler(this._onDataChange);
   }
@@ -33,18 +33,27 @@ export default class FilterController {
 
     this._filterComponent = new Filter(filters);
     this._filterComponent.setFilterChangeHandler(this._onFilterChange);
+    this._filterComponent.setStatisticsClickHandler(this._statiscticHandler);
 
     if (oldComponent) {
       replace(this._filterComponent, oldComponent);
     } else {
-      render(container, this._filterComponent, RenderPosition.BEFOREEND);
+      render(container, this._filterComponent, RenderPosition.AFTERBEGIN);
     }
+  }
+
+  getFilterComponent() {
+    return this._filterComponent;
   }
 
   _onFilterChange(filterType) {
     this._movieModel.setFilter(filterType);
     this._activeFilterType = filterType;
     this.render();
+  }
+
+  setStatisticHandler(handler) {
+    this._statiscticHandler = handler;
   }
 
   _onDataChange() {

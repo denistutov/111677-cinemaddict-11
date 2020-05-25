@@ -1,5 +1,5 @@
 import AbstractSmartComponent from "./abstract-smart-component";
-import {formatDateComment} from "../utils/common";
+import {formatDuration} from "../utils/common";
 import {encode} from "he";
 
 const createGenreTemplate = (genre) => {
@@ -52,7 +52,7 @@ const createFilmDetailsPopupTemplate = (film, emoji, message) => {
             <div class="film-details__poster">
               <img class="film-details__poster-img" src="${poster}" alt="">
 
-              <p class="film-details__age">${age}</p>
+              <p class="film-details__age">${age}+</p>
             </div>
 
             <div class="film-details__info">
@@ -86,7 +86,7 @@ const createFilmDetailsPopupTemplate = (film, emoji, message) => {
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Runtime</td>
-                  <td class="film-details__cell">${duration}</td>
+                  <td class="film-details__cell">${formatDuration(duration)}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Country</td>
@@ -171,7 +171,6 @@ export default class FilmDetailsPopup extends AbstractSmartComponent {
     this._setAddCommentHandler = null;
 
     this._subscribeOnEvents();
-    this._parseNewComment = this._parseNewComment.bind(this);
   }
 
   recoveryListeners() {
@@ -240,7 +239,11 @@ export default class FilmDetailsPopup extends AbstractSmartComponent {
   setAddCommentHandler(handler) {
     this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`keydown`, (evt) => {
       if (evt.target.value !== `` && evt.key === `Enter`) {
-        handler(this._parseNewComment());
+        const form = this.getElement().querySelector(`.film-details__inner`);
+        const formData = new FormData(form);
+        formData.append(`emoji`, this._emoji || `smile`);
+        formData.append(`text`, encode(this._message));
+        handler(formData);
       }
     });
 
@@ -254,15 +257,5 @@ export default class FilmDetailsPopup extends AbstractSmartComponent {
         handler(button.id);
       });
     });
-  }
-
-  _parseNewComment() {
-    return {
-      id: String(new Date() + Math.random()),
-      text: encode(this._message),
-      name: `John Doe`,
-      date: formatDateComment(new Date()),
-      emoji: this._emoji || `smile`,
-    };
   }
 }
