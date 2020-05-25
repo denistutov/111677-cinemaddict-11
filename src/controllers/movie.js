@@ -3,6 +3,9 @@ import {formatDateComment} from "../utils/common";
 import FilmDetailsPopup from "../components/film-details";
 import FilmCard from "../components/film-card";
 import Comments from "../models/comments";
+import API from "../api";
+
+const AUTHORIZATION = `Basic kjl348sd25fe53rej`;
 
 const Mode = {
   OPEN: `open`,
@@ -17,6 +20,7 @@ export default class MovieController {
     this._onViewChange = onViewChange;
 
     this._commentsModel = new Comments();
+    this._api = new API(AUTHORIZATION);
 
     this._mode = Mode.CLOSE;
     this._filmDetailsPopupComponent = null;
@@ -78,6 +82,9 @@ export default class MovieController {
     const pageBody = document.querySelector(`body`);
     this._onViewChange();
     this._mode = Mode.OPEN;
+    card.comments.forEach((comment) => {
+      console.log(this._api.getComments(comment));
+    });
 
     this._filmDetailsPopupComponent = new FilmDetailsPopup(card);
     this._filmDetailsPopupComponent.setClickHandler(this._filmDetailsCloseButtonHandler);
