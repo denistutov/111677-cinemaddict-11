@@ -4,7 +4,7 @@ const filterList = [
   {
     name: `All movies`,
     id: `all`,
-    active: true,
+    active: false,
     count: ``
   },
   {
@@ -24,7 +24,8 @@ const filterList = [
     id: `favorites`,
     active: false,
     count: getRandomNumber(0, 10)
-  }];
+  },
+];
 
 const generateFilterButtons = () => {
   return filterList;

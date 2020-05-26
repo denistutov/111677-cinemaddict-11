@@ -25,4 +25,18 @@ export default class Comments {
   addComment(comment) {
     this._comments = [].concat(this._comments, comment);
   }
+
+  parseComments(commentsData) {
+    const parsedComments = commentsData.map((comment) => {
+      return {
+        id: comment[`id`],
+        text: comment[`comment`],
+        name: comment[`author`],
+        date: new Date(comment[`date`]),
+        emoji: comment[`emotion`],
+      };
+    });
+
+    return parsedComments;
+  }
 }

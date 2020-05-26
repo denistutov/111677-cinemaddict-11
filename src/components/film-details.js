@@ -1,4 +1,5 @@
 import AbstractSmartComponent from "./abstract-smart-component";
+import {formatDuration} from "../utils/common";
 import {encode} from "he";
 
 const createGenreTemplate = (genre) => {
@@ -51,7 +52,7 @@ const createFilmDetailsPopupTemplate = (film, emoji, message) => {
             <div class="film-details__poster">
               <img class="film-details__poster-img" src="${poster}" alt="">
 
-              <p class="film-details__age">${age}</p>
+              <p class="film-details__age">${age}+</p>
             </div>
 
             <div class="film-details__info">
@@ -85,7 +86,7 @@ const createFilmDetailsPopupTemplate = (film, emoji, message) => {
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Runtime</td>
-                  <td class="film-details__cell">${duration}</td>
+                  <td class="film-details__cell">${formatDuration(duration)}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Country</td>
