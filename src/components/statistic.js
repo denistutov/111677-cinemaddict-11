@@ -78,8 +78,8 @@ export default class Statistic extends AbstractSmartComponent {
   }
 
   render() {
+    super.rerender();
     this._renderStatistics();
-    this.addFilterChangeHandler();
   }
 
   _getStatisticChartElement() {

@@ -36,10 +36,11 @@ const getSortedFilmCards = (cards, sortType, from, to) => {
 };
 
 export default class CardsBoardController {
-  constructor(container, sortFilmsComponent, movieModel) {
+  constructor(container, sortFilmsComponent, movieModel, api) {
     this._container = container;
     this._movieModel = movieModel;
     this._sortFilmsComponent = sortFilmsComponent;
+    this._api = api;
 
     this._cards = [];
     this._showedFilmCardsControllers = [];
@@ -135,11 +136,14 @@ export default class CardsBoardController {
   }
 
   _onDataChange(cardController, oldData, newData) {
-    const isSuccess = this._movieModel.updateFilmCard(oldData.id, newData);
+    this._api.updateFilm(oldData.id, newData)
+      .then((loadedFilmData) => {
+        const isSuccess = this._movieModel.updateFilmCard(oldData.id, loadedFilmData);
 
-    if (isSuccess) {
-      cardController.render(newData);
-    }
+        if (isSuccess) {
+          cardController.render(loadedFilmData);
+        }
+      });
   }
 
   _onViewChange() {

@@ -29,7 +29,7 @@ export default class Comments {
   }
 
   parseComments(commentsData) {
-    const parsedComments = commentsData.map((comment) => {
+    return commentsData.map((comment) => {
       return {
         id: comment[`id`],
         text: comment[`comment`],
@@ -38,7 +38,5 @@ export default class Comments {
         emoji: comment[`emotion`],
       };
     });
-
-    return parsedComments;
   }
 }
