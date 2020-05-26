@@ -84,7 +84,7 @@ export default class MovieController {
     this._mode = Mode.OPEN;
     this._api = new API(AUTHORIZATION);
 
-    this._filmDetailsPopupComponent = new FilmDetailsPopup(card, this._parseComments(card.id));
+    this._filmDetailsPopupComponent = new FilmDetailsPopup(card, this._parseComments(card.comments));
     this._filmDetailsPopupComponent.setClickHandler(this._filmDetailsCloseButtonHandler);
 
     const addComment = (data) => {
@@ -118,12 +118,13 @@ export default class MovieController {
     document.addEventListener(`keydown`, this._onFilmDetailsPopupKeydown);
   }
 
-  _parseComments(id) {
-    this._api.getComments(id)
-      .then((comments) => {
-        const parseComments = this._commentsModel.parseComments(comments);
-        this._commentsModel.setComments(parseComments);
-      });
+  _parseComments(idArray) {
+    const comments = [];
+    idArray.forEach((id) => {
+      comments.push(this._api.getComments(id));
+    });
+
+    this._commentsModel.setComments(comments);
 
     return this._commentsModel.getComments();
   }
