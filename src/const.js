@@ -27,3 +27,5 @@ export const StatsFilter = {
   MONTH: `month`,
   YEAR: `year`,
 };
+
+export const AUTHORIZATION = `Basic kjl348sd25fe53rej`;

@@ -30,11 +30,11 @@ const createCommentTemplate = (comment) => {
   );
 };
 
-const createFilmDetailsPopupTemplate = (film, emoji, message) => {
+const createFilmDetailsPopupTemplate = (film, emoji, message, comments) => {
   const {
     title, rating, releaseDate, duration, genres, poster,
     description, isInWatchList, isWatched, isFavorite,
-    age, director, writers, actors, country, comments
+    age, director, writers, actors, country
   } = film;
 
   const createGenresList = genres.map((genre) => createGenreTemplate(genre)).join(`\n`);
@@ -161,12 +161,13 @@ const createFilmDetailsPopupTemplate = (film, emoji, message) => {
 };
 
 export default class FilmDetailsPopup extends AbstractSmartComponent {
-  constructor(film) {
+  constructor(film, comments) {
     super();
     this._film = film;
     this._emoji = null;
     this._closeHandler = null;
     this._message = null;
+    this._comments = comments;
 
     this._setAddCommentHandler = null;
 
@@ -188,7 +189,7 @@ export default class FilmDetailsPopup extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return createFilmDetailsPopupTemplate(this._film, this._emoji, this._message);
+    return createFilmDetailsPopupTemplate(this._film, this._emoji, this._message, this._comments);
   }
 
   setClickHandler(handler) {
