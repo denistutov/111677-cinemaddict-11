@@ -27,7 +27,7 @@ api.getFilmCards()
     const pageHeaderComponent = new UserRank(moviesModel);
     const filterController = new FilterController(pageMain, moviesModel);
     const filmStatisticsComponent = new FilmStatistics(moviesModel.getFilmCardsAll());
-    const renderCardsBoard = new CardsBoardController(filmsCardsComponent, sortFilmsComponent, moviesModel);
+    const renderCardsBoard = new CardsBoardController(filmsCardsComponent, sortFilmsComponent, moviesModel, api);
 
     renderCardsBoard.render(filmCards);
 
