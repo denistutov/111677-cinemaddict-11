@@ -192,6 +192,14 @@ export default class FilmDetailsPopup extends AbstractSmartComponent {
     return createFilmDetailsPopupTemplate(this._film, this._emoji, this._message, this._comments);
   }
 
+  getNewCommentFormElement() {
+    return this.getElement().querySelector(`.film-details__new-comment`);
+  }
+
+  getCommentInputElement() {
+    return this.getElement().querySelector(`.film-details__comment-input`);
+  }
+
   setClickHandler(handler) {
     this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, handler);
 
@@ -239,7 +247,7 @@ export default class FilmDetailsPopup extends AbstractSmartComponent {
 
   setAddCommentHandler(handler) {
     this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`keydown`, (evt) => {
-      if (evt.target.value !== `` && evt.key === `Enter`) {
+      if (evt.target.value !== `` && (evt.key === `Enter` || evt.ctrlKey)) {
         const form = this.getElement().querySelector(`.film-details__inner`);
         const formData = new FormData(form);
         formData.append(`emoji`, this._emoji || `smile`);
@@ -252,10 +260,12 @@ export default class FilmDetailsPopup extends AbstractSmartComponent {
   }
 
   setDeleteCommentHandler(handler) {
-    this.getElement().querySelectorAll(`.film-details__comment-delete`).forEach((button) => {
-      button.addEventListener(`click`, (evt) => {
+    this.getElement().querySelectorAll(`.film-details__comment`).forEach((comment) => {
+      comment.addEventListener(`click`, (evt) => {
         evt.preventDefault();
-        handler(button.id);
+        if (evt.target.tagName === `BUTTON`) {
+          handler(evt.target, comment);
+        }
       });
     });
   }

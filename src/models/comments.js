@@ -39,4 +39,13 @@ export default class Comments {
       };
     });
   }
+
+  static commentToRaw(comment) {
+    return {
+      "comment": comment.text,
+      "author": comment.name,
+      "date": new Date().toISOString(),
+      "emotion": comment.emoji
+    };
+  }
 }
