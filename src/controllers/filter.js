@@ -37,6 +37,7 @@ export default class FilterController {
     this._filterComponent.setFilterChangeHandler(this._onFilterChange);
     this._filterComponent.setStatisticsClickHandler(() => {
       this._statiscticButtonClickHandler.forEach((handler) => handler());
+      this._filterComponent.setStatisticActive();
     });
 
     if (oldComponent) {

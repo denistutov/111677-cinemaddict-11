@@ -33,6 +33,13 @@ export default class Filter extends AbstractComponent {
     return createFilterTemplate(this._buttons);
   }
 
+  setStatisticActive() {
+    this.getElement().querySelector(`.main-navigation__additional`).classList.add(`main-navigation__item--active`);
+    this.getElement().querySelectorAll(`.main-navigation__item`).forEach((button) => {
+      button.classList.remove(`main-navigation__item--active`);
+    });
+  }
+
   setFilterChangeHandler(handler) {
     this.getElement().querySelectorAll(`.main-navigation__item`).forEach((filter) => {
       filter.addEventListener(`click`, (evt) => {

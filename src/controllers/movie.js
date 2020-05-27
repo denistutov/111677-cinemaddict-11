@@ -5,7 +5,7 @@ import FilmDetailsPopup from "../components/film-details";
 import FilmCard from "../components/film-card";
 import Comments from "../models/comments";
 import API from "../api";
-import {AUTHORIZATION} from "../const";
+import {AUTHORIZATION, Keycodes} from "../const";
 
 const SHAKE_ANIMATION_TIMEOUT = 800;
 
@@ -93,7 +93,7 @@ export default class MovieController {
 
     const addComment = (data) => {
       const newComment = this._parseNewComment(data);
-      this._filmDetailsPopupComponent.getCommentInputElement().disabled = true;
+      this._filmDetailsPopupComponent.disableCommentInputElement(true);
 
       api.addComment(card, newComment)
         .then(() => {
@@ -104,20 +104,19 @@ export default class MovieController {
           this._onDataChange(this, card, newFilmCard);
         })
         .catch(() => {
-          this._filmDetailsPopupComponent.getCommentInputElement().style.outline = `2px solid tomato`;
+          this._filmDetailsPopupComponent.onErrorCommentInputElement(true);
           this.shakeElement(this._filmDetailsPopupComponent.getNewCommentFormElement());
         })
         .then(() => {
-          this._filmDetailsPopupComponent.getCommentInputElement().disabled = false;
+          this._filmDetailsPopupComponent.disableCommentInputElement(false);
           setTimeout(() => {
-            this._filmDetailsPopupComponent.getCommentInputElement().style.outline = ``;
+            this._filmDetailsPopupComponent.onErrorCommentInputElement(false);
           }, SHAKE_ANIMATION_TIMEOUT);
         });
     };
 
-    const deleteComment = (button, comment) => {
-      button.disabled = true;
-      button.textContent = `Deleting...`;
+    const deleteComment = (button, comment, disableDeleteButton) => {
+      disableDeleteButton(true);
 
       api.deleteComment(button.id)
         .then(() => {
@@ -131,8 +130,7 @@ export default class MovieController {
           this.shakeElement(comment);
         })
         .then(() => {
-          button.disabled = false;
-          button.textContent = `Delete`;
+          disableDeleteButton(false);
         });
     };
 
@@ -187,9 +185,7 @@ export default class MovieController {
   }
 
   _onFilmDetailsPopupKeydown(evt) {
-    const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
-
-    if (isEscKey) {
+    if (evt.key === Keycodes.ESC_KEY) {
       this._closeFilmDetailsPopup();
       document.removeEventListener(`keydown`, this._onFilmDetailsPopupKeydown);
     }

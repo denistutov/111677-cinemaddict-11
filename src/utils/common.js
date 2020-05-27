@@ -61,11 +61,29 @@ const sortObject = (list) => {
   return orderedList;
 };
 
+const getTopRatedFilms = (filmsData) => {
+  return filmsData.sort((a, b) => b.rating - a.rating).filter((it, i) => i < 2);
+};
+
+const getMostCommentedFilms = (filmsData) => {
+  return filmsData.sort((a, b) => b.comments.length - a.comments.length).filter((it, i) => i < 2);
+};
+
 const getFirstSymbolUpperCase = (filterName) => filterName.charAt(0).toUpperCase() + filterName.substr(1);
 
 const formatDate = (date, yearOnly) => moment(date).format(yearOnly ? `YYYY` : `DD MMMM YYYY`);
 
 const formatDuration = (minutes) => moment.utc(moment.duration(minutes, `minutes`).asMilliseconds()).format(`h[h] m[m]`);
 
-export {getRandomNumber, getRandomArrayItem, shuffleArray,
-  formatDate, formatDuration, formatDateComment, getFirstSymbolUpperCase, sortObject};
+export {
+  getRandomNumber,
+  getRandomArrayItem,
+  shuffleArray,
+  formatDate,
+  formatDuration,
+  formatDateComment,
+  getFirstSymbolUpperCase,
+  getTopRatedFilms,
+  getMostCommentedFilms,
+  sortObject,
+};

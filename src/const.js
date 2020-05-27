@@ -13,6 +13,11 @@ export const MONTH_NAMES = [
   `December`,
 ];
 
+export const Keycodes = {
+  ESC_KEY: `Escape`,
+  ENTER_KEY: `Enter`,
+};
+
 export const FilterType = {
   ALL: `all`,
   WATCHLIST: `watchlist`,
@@ -26,6 +31,11 @@ export const StatsFilter = {
   WEEK: `week`,
   MONTH: `month`,
   YEAR: `year`,
+};
+
+export const EXTRA_FILMS_TITLES = {
+  RATED: `Top rated`,
+  COMMENTED: `Most commented`,
 };
 
 export const AUTHORIZATION = `Basic kjld48s225fe53rej`;

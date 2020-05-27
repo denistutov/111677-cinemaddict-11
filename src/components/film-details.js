@@ -1,5 +1,6 @@
 import AbstractSmartComponent from "./abstract-smart-component";
 import {formatDuration} from "../utils/common";
+import {Keycodes} from "../const";
 import {encode} from "he";
 
 const createGenreTemplate = (genre) => {
@@ -196,8 +197,12 @@ export default class FilmDetailsPopup extends AbstractSmartComponent {
     return this.getElement().querySelector(`.film-details__new-comment`);
   }
 
-  getCommentInputElement() {
-    return this.getElement().querySelector(`.film-details__comment-input`);
+  disableCommentInputElement(isDisable = true) {
+    this.getElement().querySelector(`.film-details__comment-input`).disable = isDisable;
+  }
+
+  onErrorCommentInputElement(isError = true) {
+    this.getElement().querySelector(`.film-details__comment-input`).style.outline = isError ? `2px solid tomato` : ``;
   }
 
   setClickHandler(handler) {
@@ -247,10 +252,11 @@ export default class FilmDetailsPopup extends AbstractSmartComponent {
 
   setAddCommentHandler(handler) {
     this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`keydown`, (evt) => {
-      if (evt.target.value !== `` && (evt.key === `Enter` || evt.ctrlKey)) {
+      const enterKeyDown = evt.key === Keycodes.ENTER_KEY;
+      if (evt.target.value !== `` && (evt.ctrlKey && enterKeyDown || evt.metaKey && enterKeyDown) && this._emoji) {
         const form = this.getElement().querySelector(`.film-details__inner`);
         const formData = new FormData(form);
-        formData.append(`emoji`, this._emoji || `smile`);
+        formData.append(`emoji`, this._emoji);
         formData.append(`text`, encode(this._message));
         handler(formData);
       }
@@ -263,8 +269,20 @@ export default class FilmDetailsPopup extends AbstractSmartComponent {
     this.getElement().querySelectorAll(`.film-details__comment`).forEach((comment) => {
       comment.addEventListener(`click`, (evt) => {
         evt.preventDefault();
-        if (evt.target.tagName === `BUTTON`) {
-          handler(evt.target, comment);
+        const button = evt.target;
+
+        const disableDeleteButton = (isDisable = true) => {
+          if (isDisable) {
+            button.disabled = true;
+            button.textContent = `Deleting...`;
+          } else {
+            button.disabled = false;
+            button.textContent = `Delete`;
+          }
+        };
+
+        if (button.tagName === `BUTTON`) {
+          handler(button, comment, disableDeleteButton);
         }
       });
     });

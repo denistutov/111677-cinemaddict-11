@@ -2,7 +2,10 @@ import {remove, render, RenderPosition} from "../utils/render";
 import EmptyFilmsBoard from "../components/empty-films-board";
 import FilmMoreButton from "../components/film-more-btn";
 import {SortType} from "../components/films-sort";
+import {getTopRatedFilms, getMostCommentedFilms} from "../utils/common";
+import {EXTRA_FILMS_TITLES} from "../const";
 import MovieController from "./movie";
+import FilmsExtra from "../components/film-extra";
 
 const SHOWING_FILM_CARDS_COUNT_ON_START = 5;
 const SHOWING_FILM_CARDS_COUNT_BY_BUTTON = 5;
@@ -69,7 +72,7 @@ export default class CardsBoardController {
     }
 
     this._renderFilmCards(filmCards.slice(0, this._showingFilmsCardsCount));
-    this._renderFilmCardsExtra(filmCards.slice(0, 2), filmCards.slice(2, 4));
+    this._renderFilmCardsExtra();
     this._renderShowMoreButton();
   }
 
@@ -81,14 +84,33 @@ export default class CardsBoardController {
     this._showingFilmsCardsCount = this._showedFilmCardsControllers.length;
   }
 
-  _renderFilmCardsExtra(filmsDataRated, filmsDataCommented) {
-    const cardsRatedContainer = this._container.getElement().querySelector(`.films-list__container--rated`);
-    const cardsCommentedContainer = this._container.getElement().querySelector(`.films-list__container--commented`);
+  _renderFilmCardsExtra() {
+    if (this._topRatedFilmsComponent && this._mostCommentedFilmsComponent) {
+      remove(this._topRatedFilmsComponent);
+      remove(this._mostCommentedFilmsComponent);
+    }
 
-    const cardsRated = renderFilmCards(cardsRatedContainer, filmsDataRated, this._onDataChange, this._onViewChange);
-    const cardsCommented = renderFilmCards(cardsCommentedContainer, filmsDataCommented, this._onDataChange, this._onViewChange);
+    const filmCards = this._movieModel.getFilmCards();
 
-    this._filmCardsExtraControllers = this._filmCardsExtraControllers.concat(cardsRated, cardsCommented);
+    this._topRatedFilmsComponent = new FilmsExtra(EXTRA_FILMS_TITLES.RATED);
+    this._mostCommentedFilmsComponent = new FilmsExtra(EXTRA_FILMS_TITLES.COMMENTED);
+
+    const topRatedFilms = getTopRatedFilms(filmCards);
+    const mostCommented = getMostCommentedFilms(filmCards);
+
+    if (topRatedFilms.length > 0) {
+      render(this._container.getElement(), this._topRatedFilmsComponent, RenderPosition.BEFOREEND);
+      this._topRatedFilmsControllers = renderFilmCards(this._topRatedFilmsComponent.getFilmsListContainer(), topRatedFilms, this._onDataChange, this._onViewChange);
+    }
+
+    if (mostCommented.length > 0) {
+      render(this._container.getElement(), this._mostCommentedFilmsComponent, RenderPosition.BEFOREEND);
+      this._mostCommentedFilmsControllers = renderFilmCards(this._mostCommentedFilmsComponent.getFilmsListContainer(), mostCommented, this._onDataChange, this._onViewChange);
+    }
+
+    this._filmCardsExtraControllers = this._filmCardsExtraControllers.concat(this._topRatedFilmsControllers, this._mostCommentedFilmsControllers);
+
+    // TODO: Добавить обновление карточки из списка карточек, если изменилась карточка в экстра-списке.
   }
 
   _renderShowMoreButton() {
@@ -142,6 +164,7 @@ export default class CardsBoardController {
 
         if (isSuccess) {
           cardController.render(loadedFilmData);
+          this._renderFilmCardsExtra();
         }
       });
   }
