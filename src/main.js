@@ -7,58 +7,49 @@ import FilmsSort from "./components/films-sort";
 import FilterController from "./controllers/filter";
 import Movies from "./models/movies";
 import Statistic from "./components/statistic";
-// import API from "./api";
-
-import {generateFilms} from "./mock/film-card";
-
-// const AUTHORIZATION = `Basic kjl348sd25353rej`;
-const FILM_CARDS_COUNT = 20;
+import API from "./api";
+import {AUTHORIZATION} from "./const";
 
 const pageHeader = document.querySelector(`.header`);
 const pageMain = document.querySelector(`.main`);
 const footerStatistic = document.querySelector(`.footer__statistics`);
 
 const moviesModel = new Movies();
-const filmCards = generateFilms(FILM_CARDS_COUNT);
-moviesModel.setFilmCards(filmCards);
+const api = new API(AUTHORIZATION);
 
-// const api = new API(AUTHORIZATION);
-//
-// api.getFilmCards()
-//   .then((filmCards) => {
-//     moviesModel.setFilmCards(filmCards);
-//     renderCardsBoard.render(filmCards);
-//   });
+api.getFilmCards()
+  .then((filmCards) => {
+    moviesModel.setFilmCards(filmCards);
 
-const pageHeaderComponent = new UserRank(moviesModel);
-const filterController = new FilterController(pageMain, moviesModel);
-const filmsCardsComponent = new FilmListContainer();
-const sortFilmsComponent = new FilmsSort();
-const filmStatisticsComponent = new FilmStatistics(filmCards);
-const statisticComponent = new Statistic(moviesModel);
+    const filmsCardsComponent = new FilmListContainer();
+    const sortFilmsComponent = new FilmsSort();
+    const statisticComponent = new Statistic(moviesModel);
+    const pageHeaderComponent = new UserRank(moviesModel);
+    const filterController = new FilterController(pageMain, moviesModel);
+    const filmStatisticsComponent = new FilmStatistics(moviesModel.getFilmCardsAll());
+    const renderCardsBoard = new CardsBoardController(filmsCardsComponent, sortFilmsComponent, moviesModel);
 
-render(pageMain, sortFilmsComponent, RenderPosition.BEFOREEND);
-render(pageHeader, pageHeaderComponent, RenderPosition.BEFOREEND);
-filterController.render();
-render(pageMain, filmsCardsComponent, RenderPosition.BEFOREEND);
-render(pageMain, statisticComponent, RenderPosition.BEFOREEND);
+    renderCardsBoard.render(filmCards);
 
-const renderCardsBoard = new CardsBoardController(filmsCardsComponent, sortFilmsComponent, moviesModel);
-renderCardsBoard.render(filmCards);
+    render(pageMain, sortFilmsComponent, RenderPosition.BEFOREEND);
+    render(pageHeader, pageHeaderComponent, RenderPosition.BEFOREEND);
+    filterController.render();
+    render(pageMain, filmsCardsComponent, RenderPosition.BEFOREEND);
+    render(pageMain, statisticComponent, RenderPosition.BEFOREEND);
+    render(footerStatistic, filmStatisticsComponent, RenderPosition.BEFOREEND);
 
-render(footerStatistic, filmStatisticsComponent, RenderPosition.BEFOREEND);
+    filterController.addStatisticsButtonClickHandler(() => {
+      renderCardsBoard.hide();
+      sortFilmsComponent.hide();
+      statisticComponent.show();
+      statisticComponent.render();
+    });
 
-statisticComponent.hide();
+    filterController.addFilterChangeHandler(() => {
+      statisticComponent.hide();
+      renderCardsBoard.show();
+      sortFilmsComponent.show();
+    });
 
-filterController.setStatisticHandler(() => {
-  renderCardsBoard.hide();
-  sortFilmsComponent.hide();
-  statisticComponent.show();
-  statisticComponent.render();
-});
-
-filterController.getFilterComponent().setFilterChangeHandler(() => {
-  statisticComponent.hide();
-  renderCardsBoard.show();
-  sortFilmsComponent.show();
-});
+    statisticComponent.hide();
+  });

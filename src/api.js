@@ -1,27 +1,58 @@
 import MovieModel from "./models/movie";
 import CommentsModel from "./models/comments";
 
+const Method = {
+  GET: `GET`,
+  POST: `POST`,
+  PUT: `PUT`,
+  DELETE: `DELETE`
+};
+
+const checkStatus = (response) => {
+  if (response.status >= 200 && response.status < 300) {
+    return response;
+  } else {
+    throw new Error(`${response.status}: ${response.statusText}`);
+  }
+};
+
 const API = class {
   constructor(authorization) {
     this._authorization = authorization;
-  }
-
-  _getHeaders() {
-    const headers = new Headers();
-    headers.append(`Authorization`, this._authorization);
-    return {headers};
+    this._endPoint = `https://11.ecmascript.pages.academy/cinemaddict/`;
   }
 
   getFilmCards() {
-    return fetch(`https://11.ecmascript.pages.academy/cinemaddict/movies`, this._getHeaders())
+    return this._load({url: `movies`})
       .then((response) => response.json())
       .then(MovieModel.parseFilms);
   }
 
   getComments(id) {
-    return fetch(`https://11.ecmascript.pages.academy/cinemaddict/comments/${id}`, this._getHeaders())
+    return this._load({url: `comments/${id}`})
       .then((response) => response.json())
       .then(CommentsModel.parseComments);
+  }
+
+  updateFilm(id, data) {
+    return this._load({
+      url: `movies/${id}`,
+      headers: new Headers({"Content-Type": `application/json`}),
+      method: Method.PUT,
+      body: JSON.stringify(data.toRAW()),
+    })
+      .then((response) => response.json())
+      .then(MovieModel.parseFilm);
+  }
+
+  _load({url, method = Method.GET, body = null, headers = new Headers()}) {
+    headers.append(`Authorization`, this._authorization);
+
+    return fetch(`${this._endPoint}/${url}`, {method, body, headers})
+      .then(checkStatus)
+      .catch((err) => {
+        throw err;
+      });
   }
 };
 
