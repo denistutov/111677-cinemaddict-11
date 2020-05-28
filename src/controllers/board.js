@@ -47,6 +47,7 @@ export default class CardsBoardController {
 
     this._cards = [];
     this._showedFilmCardsControllers = [];
+    this._currentActiveController = null;
     this._emptyFilmsBoardComponent = new EmptyFilmsBoard();
     this._showMoreButtonComponent = new FilmMoreButton();
     this._showingFilmsCardsCount = SHOWING_FILM_CARDS_COUNT_ON_START;
@@ -153,7 +154,7 @@ export default class CardsBoardController {
   }
 
   _updateAllFilmCards(oldData, newData) {
-    [...this._showedFilmCardsControllers, ...this._topRatedFilmsControllers, ...this._mostCommentedFilmsControllers]
+    [...this._showedFilmCardsControllers, ...this._topRatedFilmsControllers, ...this._mostCommentedFilmsControllers, this._currentActiveController]
       .forEach((controller) => {
         if (controller.getCurrentCard().id === oldData.id) {
           controller.render(newData);
@@ -161,7 +162,8 @@ export default class CardsBoardController {
       });
   }
 
-  _onDataChange(oldData, newData) {
+  _onDataChange(controller, oldData, newData) {
+    this._currentActiveController = controller;
     this._api.updateFilm(oldData.id, newData)
       .then((loadedFilmData) => {
         const isSuccess = this._movieModel.updateFilmCard(oldData.id, loadedFilmData);

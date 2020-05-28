@@ -27,6 +27,7 @@ export default class MovieController {
     this._mode = Mode.CLOSE;
     this._filmDetailsPopupComponent = null;
     this._filmCardComponent = null;
+    this._oldFilmCardComponent = null;
 
     this._onFilmDetailsPopupKeydown = this._onFilmDetailsPopupKeydown.bind(this);
     this._filmDetailsCloseButtonHandler = this._filmDetailsCloseButtonHandler.bind(this);
@@ -39,7 +40,7 @@ export default class MovieController {
 
   render(card) {
     this._card = card;
-    const oldFilmCardComponent = this._filmCardComponent;
+    this._oldFilmCardComponent = this._filmCardComponent;
     this._filmCardComponent = new FilmCard(card);
 
     const filmCardPosterHandler = () => {
@@ -63,14 +64,13 @@ export default class MovieController {
       this._addFavorite(card);
     });
 
-    if (oldFilmCardComponent) {
-      replace(this._filmCardComponent, oldFilmCardComponent);
+    if (this._oldFilmCardComponent) {
+      replace(this._filmCardComponent, this._oldFilmCardComponent);
     } else {
       render(this._container, this._filmCardComponent, RenderPosition.BEFOREEND);
     }
 
-    if (oldFilmCardComponent && this._mode === Mode.OPEN) {
-      remove(this._filmDetailsPopupComponent);
+    if (this._mode === Mode.OPEN) {
       this._renderFilmPopup(card);
     }
   }
@@ -93,6 +93,7 @@ export default class MovieController {
     const pageBody = document.querySelector(`body`);
     this._onViewChange();
     this._mode = Mode.OPEN;
+    const oldPopupComponent = this._filmDetailsPopupComponent;
 
     this._filmDetailsPopupComponent = new FilmDetailsPopup(card, comments);
     this._filmDetailsPopupComponent.setClickHandler(this._filmDetailsCloseButtonHandler);
@@ -107,7 +108,7 @@ export default class MovieController {
           newFilmCard.comments.push(newComment.id);
 
           this._commentsModel.addComment(newComment);
-          this._onDataChange(card, newFilmCard);
+          this._onDataChange(this, card, newFilmCard);
         })
         .catch(() => {
           this._filmDetailsPopupComponent.onErrorCommentInputElement(true);
@@ -130,7 +131,7 @@ export default class MovieController {
           newFilmCard.comments = newFilmCard.comments.filter((id) => id !== button.id);
 
           this._commentsModel.deleteComment(button.id);
-          this._onDataChange(card, newFilmCard);
+          this._onDataChange(this, card, newFilmCard);
         })
         .catch(() => {
           this.shakeElement(comment);
@@ -148,6 +149,10 @@ export default class MovieController {
     this._filmDetailsPopupComponent.setAddToWatchlistClickHandler(() => this._addToWatchlist(card));
     this._filmDetailsPopupComponent.setMarkAsWatchedClickHandler(() => this._markAsWatched(card));
     this._filmDetailsPopupComponent.setFavoriteClickHandler(() => this._addFavorite(card));
+
+    if (oldPopupComponent !== null && this._mode === Mode.OPEN) {
+      replace(this._filmDetailsPopupComponent, oldPopupComponent);
+    }
 
     document.addEventListener(`keydown`, this._onFilmDetailsPopupKeydown);
   }
@@ -181,7 +186,7 @@ export default class MovieController {
   }
 
   _closeFilmDetailsPopup() {
-    remove(this._filmDetailsPopupComponent);
+    this._filmDetailsPopupComponent.getElement().remove();
     this._mode = Mode.CLOSE;
   }
 
@@ -201,20 +206,20 @@ export default class MovieController {
     const newFilmCard = MovieModel.clone(card);
     newFilmCard.isInWatchList = !newFilmCard.isInWatchList;
 
-    this._onDataChange(card, newFilmCard);
+    this._onDataChange(this, card, newFilmCard);
   }
 
   _markAsWatched(card) {
     const newFilmCard = MovieModel.clone(card);
     newFilmCard.isWatched = !newFilmCard.isWatched;
 
-    this._onDataChange(card, newFilmCard);
+    this._onDataChange(this, card, newFilmCard);
   }
 
   _addFavorite(card) {
     const newFilmCard = MovieModel.clone(card);
     newFilmCard.isFavorite = !newFilmCard.isFavorite;
 
-    this._onDataChange(card, newFilmCard);
+    this._onDataChange(this, card, newFilmCard);
   }
 }
