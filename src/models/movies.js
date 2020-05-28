@@ -131,6 +131,6 @@ export default class Movies {
       return total + film.duration;
     }, 0);
 
-    return topDuration > 0 ? formatDuration(topDuration) : 0;
+    return topDuration > 0 ? formatDuration(topDuration) : `0h 0m`;
   }
 }
