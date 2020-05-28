@@ -22,6 +22,7 @@ export default class MovieController {
     this._onViewChange = onViewChange;
 
     this._commentsModel = new Comments();
+    this._card = {};
 
     this._mode = Mode.CLOSE;
     this._filmDetailsPopupComponent = null;
@@ -37,6 +38,7 @@ export default class MovieController {
   }
 
   render(card) {
+    this._card = card;
     const oldFilmCardComponent = this._filmCardComponent;
     this._filmCardComponent = new FilmCard(card);
 
@@ -83,6 +85,10 @@ export default class MovieController {
     }
   }
 
+  getCurrentCard() {
+    return this._card;
+  }
+
   _renderFilmDetails(card, comments, api) {
     const pageBody = document.querySelector(`body`);
     this._onViewChange();
@@ -101,7 +107,7 @@ export default class MovieController {
           newFilmCard.comments.push(newComment.id);
 
           this._commentsModel.addComment(newComment);
-          this._onDataChange(this, card, newFilmCard);
+          this._onDataChange(card, newFilmCard);
         })
         .catch(() => {
           this._filmDetailsPopupComponent.onErrorCommentInputElement(true);
@@ -124,7 +130,7 @@ export default class MovieController {
           newFilmCard.comments = newFilmCard.comments.filter((id) => id !== button.id);
 
           this._commentsModel.deleteComment(button.id);
-          this._onDataChange(this, card, newFilmCard);
+          this._onDataChange(card, newFilmCard);
         })
         .catch(() => {
           this.shakeElement(comment);
@@ -195,20 +201,20 @@ export default class MovieController {
     const newFilmCard = MovieModel.clone(card);
     newFilmCard.isInWatchList = !newFilmCard.isInWatchList;
 
-    this._onDataChange(this, card, newFilmCard);
+    this._onDataChange(card, newFilmCard);
   }
 
   _markAsWatched(card) {
     const newFilmCard = MovieModel.clone(card);
     newFilmCard.isWatched = !newFilmCard.isWatched;
 
-    this._onDataChange(this, card, newFilmCard);
+    this._onDataChange(card, newFilmCard);
   }
 
   _addFavorite(card) {
     const newFilmCard = MovieModel.clone(card);
     newFilmCard.isFavorite = !newFilmCard.isFavorite;
 
-    this._onDataChange(this, card, newFilmCard);
+    this._onDataChange(card, newFilmCard);
   }
 }

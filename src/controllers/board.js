@@ -47,7 +47,6 @@ export default class CardsBoardController {
 
     this._cards = [];
     this._showedFilmCardsControllers = [];
-    this._filmCardsExtraControllers = [];
     this._emptyFilmsBoardComponent = new EmptyFilmsBoard();
     this._showMoreButtonComponent = new FilmMoreButton();
     this._showingFilmsCardsCount = SHOWING_FILM_CARDS_COUNT_ON_START;
@@ -107,10 +106,6 @@ export default class CardsBoardController {
       render(this._container.getElement(), this._mostCommentedFilmsComponent, RenderPosition.BEFOREEND);
       this._mostCommentedFilmsControllers = renderFilmCards(this._mostCommentedFilmsComponent.getFilmsListContainer(), mostCommented, this._onDataChange, this._onViewChange);
     }
-
-    this._filmCardsExtraControllers = this._filmCardsExtraControllers.concat(this._topRatedFilmsControllers, this._mostCommentedFilmsControllers);
-
-    // TODO: Добавить обновление карточки из списка карточек, если изменилась карточка в экстра-списке.
   }
 
   _renderShowMoreButton() {
@@ -157,13 +152,22 @@ export default class CardsBoardController {
     this._sortFilmsComponent.setDefaultView();
   }
 
-  _onDataChange(cardController, oldData, newData) {
+  _updateAllFilmCards(oldData, newData) {
+    [...this._showedFilmCardsControllers, ...this._topRatedFilmsControllers, ...this._mostCommentedFilmsControllers]
+      .forEach((controller) => {
+        if (controller.getCurrentCard().id === oldData.id) {
+          controller.render(newData);
+        }
+      });
+  }
+
+  _onDataChange(oldData, newData) {
     this._api.updateFilm(oldData.id, newData)
       .then((loadedFilmData) => {
         const isSuccess = this._movieModel.updateFilmCard(oldData.id, loadedFilmData);
 
         if (isSuccess) {
-          cardController.render(loadedFilmData);
+          this._updateAllFilmCards(oldData, newData);
           this._renderFilmCardsExtra();
         }
       });
