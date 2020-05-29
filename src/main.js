@@ -2,11 +2,11 @@ import {remove, render, RenderPosition} from "./utils/render";
 import UserRank from "./components/user-rank";
 import FilmListContainer from "./components/film-list-container";
 import FilmStatistics from "./components/film-statistics";
-import CardsBoardController from "./controllers/board";
+import CardsBoardController from "./controllers/cards-board";
 import FilmsSort from "./components/films-sort";
 import FilterController from "./controllers/filter";
-import Movies from "./models/movies";
-import PageLoading from "./components/loading";
+import MoviesModel from "./models/movies";
+import PageLoading from "./components/page-loading";
 import Statistic from "./components/statistic";
 import API from "./api";
 import {AUTHORIZATION} from "./const";
@@ -15,7 +15,7 @@ const pageHeader = document.querySelector(`.header`);
 const pageMain = document.querySelector(`.main`);
 const footerStatistic = document.querySelector(`.footer__statistics`);
 
-const moviesModel = new Movies();
+const moviesModel = new MoviesModel();
 const api = new API(AUTHORIZATION);
 
 const filterController = new FilterController(pageMain, moviesModel);

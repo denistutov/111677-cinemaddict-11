@@ -201,17 +201,17 @@ export default class FilmDetailsPopup extends AbstractSmartComponent {
     this.getElement().querySelector(`.film-details__comment-input`).disable = isDisable;
   }
 
-  onErrorCommentInputElement(isError = true) {
+  setErrorCommentInputElement(isError = true) {
     this.getElement().querySelector(`.film-details__comment-input`).style.outline = isError ? `2px solid tomato` : ``;
   }
 
-  setClickHandler(handler) {
+  setCloseButtonClickHandler(handler) {
     this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, handler);
 
     this._closeHandler = handler;
   }
 
-  removeClickHandler(handler) {
+  removeCloseButtonClickHandler(handler) {
     this.getElement().querySelector(`.film-details__close-btn`).removeEventListener(`click`, handler);
   }
 
@@ -271,17 +271,17 @@ export default class FilmDetailsPopup extends AbstractSmartComponent {
         evt.preventDefault();
         const button = evt.target;
 
-        const disableDeleteButton = (isDisable = true) => {
-          if (isDisable) {
-            button.disabled = true;
-            button.textContent = `Deleting...`;
-          } else {
-            button.disabled = false;
-            button.textContent = `Delete`;
-          }
-        };
-
         if (button.tagName === `BUTTON`) {
+          const disableDeleteButton = (isDisable) => {
+            if (isDisable) {
+              button.disabled = true;
+              button.textContent = `Deleting...`;
+            } else {
+              button.disabled = false;
+              button.textContent = `Delete`;
+            }
+          };
+
           handler(button, comment, disableDeleteButton);
         }
       });

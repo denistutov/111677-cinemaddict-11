@@ -1,0 +1,11 @@
+import AbstractComponent from "./abstract-component.js";
+
+export default class PageLoading extends AbstractComponent {
+  getTemplate() {
+    return (`<section class="films">
+      <section class="films-list">
+        <h2 class="films-list__title">Loading...</h2>
+      </section>
+    </section>`);
+  }
+}

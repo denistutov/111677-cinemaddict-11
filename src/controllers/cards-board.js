@@ -3,7 +3,7 @@ import EmptyFilmsBoard from "../components/empty-films-board";
 import FilmMoreButton from "../components/film-more-btn";
 import {SortType} from "../components/films-sort";
 import {getTopRatedFilms, getMostCommentedFilms} from "../utils/common";
-import {EXTRA_FILMS_TITLES} from "../const";
+import {ExtraFilmsTitles} from "../const";
 import MovieController from "./movie";
 import FilmsExtra from "../components/film-extra";
 
@@ -47,15 +47,14 @@ export default class CardsBoardController {
 
     this._cards = [];
     this._showedFilmCardsControllers = [];
-    this._currentActiveController = null;
     this._emptyFilmsBoardComponent = new EmptyFilmsBoard();
     this._showMoreButtonComponent = new FilmMoreButton();
     this._showingFilmsCardsCount = SHOWING_FILM_CARDS_COUNT_ON_START;
 
-    this._onSortTypeChange = this._onSortTypeChange.bind(this);
-    this._onFilterChange = this._onFilterChange.bind(this);
     this._onDataChange = this._onDataChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
+    this._onSortTypeChange = this._onSortTypeChange.bind(this);
+    this._onFilterChange = this._onFilterChange.bind(this);
     this._showMoreButtonClickHandler = this._showMoreButtonClickHandler.bind(this);
 
     this._sortFilmsComponent.setSortTypeChangeHandler(this._onSortTypeChange);
@@ -66,7 +65,6 @@ export default class CardsBoardController {
     const filmCards = this._movieModel.getFilmCards();
 
     if (filmCards.length === 0) {
-      this._container.getElement().innerHTML = ``;
       render(this._container.getElement(), this._emptyFilmsBoardComponent, RenderPosition.BEFOREEND);
       return;
     }
@@ -92,20 +90,17 @@ export default class CardsBoardController {
 
     const filmCards = this._movieModel.getFilmCards();
 
-    this._topRatedFilmsComponent = new FilmsExtra(EXTRA_FILMS_TITLES.RATED);
-    this._mostCommentedFilmsComponent = new FilmsExtra(EXTRA_FILMS_TITLES.COMMENTED);
+    this._topRatedFilmsComponent = new FilmsExtra(ExtraFilmsTitles.RATED);
+    this._mostCommentedFilmsComponent = new FilmsExtra(ExtraFilmsTitles.COMMENTED);
 
-    const topRatedFilms = getTopRatedFilms(filmCards);
-    const mostCommented = getMostCommentedFilms(filmCards);
-
-    if (topRatedFilms.length > 0) {
+    if (getTopRatedFilms(filmCards).length > 0) {
       render(this._container.getElement(), this._topRatedFilmsComponent, RenderPosition.BEFOREEND);
-      this._topRatedFilmsControllers = renderFilmCards(this._topRatedFilmsComponent.getFilmsListContainer(), topRatedFilms, this._onDataChange, this._onViewChange);
+      this._topRatedFilmsControllers = renderFilmCards(this._topRatedFilmsComponent.getFilmsListContainer(), getTopRatedFilms(filmCards), this._onDataChange, this._onViewChange);
     }
 
-    if (mostCommented.length > 0) {
+    if (getMostCommentedFilms(filmCards).length > 0) {
       render(this._container.getElement(), this._mostCommentedFilmsComponent, RenderPosition.BEFOREEND);
-      this._mostCommentedFilmsControllers = renderFilmCards(this._mostCommentedFilmsComponent.getFilmsListContainer(), mostCommented, this._onDataChange, this._onViewChange);
+      this._mostCommentedFilmsControllers = renderFilmCards(this._mostCommentedFilmsComponent.getFilmsListContainer(), getMostCommentedFilms(filmCards), this._onDataChange, this._onViewChange);
     }
   }
 
@@ -153,8 +148,8 @@ export default class CardsBoardController {
     this._sortFilmsComponent.setDefaultView();
   }
 
-  _updateAllFilmCards(oldData, newData) {
-    [...this._showedFilmCardsControllers, ...this._topRatedFilmsControllers, ...this._mostCommentedFilmsControllers, this._currentActiveController]
+  _updateAllFilmCards(oldData, newData, currentActiveController) {
+    [...this._showedFilmCardsControllers, ...this._topRatedFilmsControllers, ...this._mostCommentedFilmsControllers, currentActiveController]
       .forEach((controller) => {
         if (controller.getCurrentCard().id === oldData.id) {
           controller.render(newData);
@@ -163,13 +158,12 @@ export default class CardsBoardController {
   }
 
   _onDataChange(controller, oldData, newData) {
-    this._currentActiveController = controller;
     this._api.updateFilm(oldData.id, newData)
       .then((loadedFilmData) => {
         const isSuccess = this._movieModel.updateFilmCard(oldData.id, loadedFilmData);
 
         if (isSuccess) {
-          this._updateAllFilmCards(oldData, newData);
+          this._updateAllFilmCards(oldData, newData, controller);
           this._renderFilmCardsExtra();
         }
       });
