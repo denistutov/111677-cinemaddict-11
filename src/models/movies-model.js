@@ -59,7 +59,7 @@ export default class MoviesModel {
   }
 
   getFilmsByWatched(periodName = StatsFilter.ALL_TIME) {
-    let filmsInWatchList = this._films.filter((film) => film.isInWatchList);
+    let filmsInWatchList = this._films.filter((film) => film.isWatched);
 
     if (periodName === StatsFilter.ALL_TIME) {
       return filmsInWatchList;
