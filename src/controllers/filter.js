@@ -15,8 +15,8 @@ export default class FilterController {
 
     this._onDataChange = this._onDataChange.bind(this);
     this._onFilterChange = this._onFilterChange.bind(this);
-    this.addStatisticsButtonClickHandler = this.addStatisticsButtonClickHandler.bind(this);
     this.addFilterChangeHandler = this.addFilterChangeHandler.bind(this);
+    this.addStatisticsButtonClickHandler = this.addStatisticsButtonClickHandler.bind(this);
 
     this._movieModel.setDataChangeHandler(this._onDataChange);
   }
@@ -24,6 +24,7 @@ export default class FilterController {
   render() {
     const container = this._container;
     const allFilmCards = this._movieModel.getFilmCardsAll();
+
     const filters = Object.values(FilterType).map((filterType) => {
       return {
         name: filterType,
@@ -31,12 +32,14 @@ export default class FilterController {
         active: filterType === this._activeFilterType,
       };
     });
-    const oldComponent = this._filterComponent;
 
+    const oldComponent = this._filterComponent;
     this._filterComponent = new Filter(filters);
+
     this._filterComponent.setFilterChangeHandler(this._onFilterChange);
     this._filterComponent.setStatisticsClickHandler(() => {
       this._statiscticButtonClickHandler.forEach((handler) => handler());
+      this._filterComponent.setStatisticActive();
     });
 
     if (oldComponent) {
@@ -44,10 +47,6 @@ export default class FilterController {
     } else {
       render(container, this._filterComponent, RenderPosition.AFTERBEGIN);
     }
-  }
-
-  getFilterComponent() {
-    return this._filterComponent;
   }
 
   _onFilterChange(filterType) {

@@ -1,10 +1,10 @@
 import {FilterType} from "../const.js";
 
-export const getMoviesInWatchlist = (moviesData) => {
+const getMoviesInWatchlist = (moviesData) => {
   return moviesData.filter((movieData) => movieData.isInWatchList);
 };
 
-export const getMoviesWatched = (moviesData) => {
+const getMoviesWatched = (moviesData) => {
   return moviesData.filter((movieData) => movieData.isWatched);
 };
 
@@ -12,7 +12,7 @@ export const getMoviesFavorite = (moviesData) => {
   return moviesData.filter((movieData) => movieData.isFavorite);
 };
 
-export const getMoviesByFilter = (moviesData, filterType) => {
+const getMoviesByFilter = (moviesData, filterType) => {
   switch (filterType) {
     case FilterType.ALL:
       return moviesData;
@@ -26,3 +26,5 @@ export const getMoviesByFilter = (moviesData, filterType) => {
 
   return moviesData;
 };
+
+export {getMoviesInWatchlist, getMoviesWatched, getMoviesByFilter};

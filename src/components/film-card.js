@@ -1,6 +1,8 @@
 import AbstractComponent from "./abstract-component";
 import {formatDuration} from "../utils/common";
 
+const MAX_DESCRIPTION_LENGTH = 140;
+
 const createFilmCardTemplate = (film) => {
   const {title, rating, releaseYear, duration, genres, poster, description, comments, isInWatchList, isWatched, isFavorite} = film;
   return (
@@ -13,7 +15,7 @@ const createFilmCardTemplate = (film) => {
         <span class="film-card__genre">${genres.length > 0 ? genres[0] : ``}</span>
       </p>
       <img src="${poster}" alt="" class="film-card__poster">
-      <p class="film-card__description">${description}</p>
+      <p class="film-card__description">${description.length > MAX_DESCRIPTION_LENGTH ? description.slice(0, MAX_DESCRIPTION_LENGTH - 1) + `...` : description}</p>
       <a class="film-card__comments">${comments.length} comments</a>
       <form class="film-card__controls">
         <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${isInWatchList ? `film-card__controls-item--active` : `` }">Add to watchlist</button>
@@ -34,8 +36,10 @@ export default class FilmCard extends AbstractComponent {
     return createFilmCardTemplate(this._film);
   }
 
-  setClickHandler(handler) {
+  setFilmDetailsOpenCHandler(handler) {
+    this.getElement().querySelector(`.film-card__title`).addEventListener(`click`, handler);
     this.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, handler);
+    this.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, handler);
   }
 
   setAddToWatchlistClickHandler(handler) {

@@ -1,5 +1,6 @@
 import AbstractSmartComponent from "./abstract-smart-component";
 import {formatDuration} from "../utils/common";
+import {Keycodes} from "../const";
 import {encode} from "he";
 
 const createGenreTemplate = (genre) => {
@@ -93,7 +94,7 @@ const createFilmDetailsPopupTemplate = (film, emoji, message, comments) => {
                   <td class="film-details__cell">${country}</td>
                 </tr>
                 <tr class="film-details__row">
-                  <td class="film-details__term">Genres</td>
+                  <td class="film-details__term">${genres.length > 1 ? `Genres` : `Genre`}</td>
                   <td class="film-details__cell">
                     ${createGenresList}
                   </td>
@@ -175,7 +176,7 @@ export default class FilmDetailsPopup extends AbstractSmartComponent {
   }
 
   recoveryListeners() {
-    this.setClickHandler(this._closeHandler);
+    this.setCloseButtonClickHandler(this._closeHandler);
     this._subscribeOnEvents();
 
     this.setAddToWatchlistClickHandler(this._addToWatchlistHandler);
@@ -196,17 +197,21 @@ export default class FilmDetailsPopup extends AbstractSmartComponent {
     return this.getElement().querySelector(`.film-details__new-comment`);
   }
 
-  getCommentInputElement() {
-    return this.getElement().querySelector(`.film-details__comment-input`);
+  disableCommentInputElement(isDisable = true) {
+    this.getElement().querySelector(`.film-details__comment-input`).disable = isDisable;
   }
 
-  setClickHandler(handler) {
+  setErrorCommentInputElement(isError = true) {
+    this.getElement().querySelector(`.film-details__comment-input`).style.outline = isError ? `2px solid tomato` : ``;
+  }
+
+  setCloseButtonClickHandler(handler) {
     this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, handler);
 
     this._closeHandler = handler;
   }
 
-  removeClickHandler(handler) {
+  removeCloseButtonClickHandler(handler) {
     this.getElement().querySelector(`.film-details__close-btn`).removeEventListener(`click`, handler);
   }
 
@@ -247,10 +252,11 @@ export default class FilmDetailsPopup extends AbstractSmartComponent {
 
   setAddCommentHandler(handler) {
     this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`keydown`, (evt) => {
-      if (evt.target.value !== `` && (evt.key === `Enter` || evt.ctrlKey)) {
+      const enterKeyDown = evt.key === Keycodes.ENTER_KEY;
+      if (evt.target.value !== `` && (evt.ctrlKey && enterKeyDown || evt.metaKey && enterKeyDown) && this._emoji) {
         const form = this.getElement().querySelector(`.film-details__inner`);
         const formData = new FormData(form);
-        formData.append(`emoji`, this._emoji || `smile`);
+        formData.append(`emoji`, this._emoji);
         formData.append(`text`, encode(this._message));
         handler(formData);
       }
@@ -263,8 +269,20 @@ export default class FilmDetailsPopup extends AbstractSmartComponent {
     this.getElement().querySelectorAll(`.film-details__comment`).forEach((comment) => {
       comment.addEventListener(`click`, (evt) => {
         evt.preventDefault();
-        if (evt.target.tagName === `BUTTON`) {
-          handler(evt.target, comment);
+        const button = evt.target;
+
+        if (button.tagName === `BUTTON`) {
+          const disableDeleteButton = (isDisable) => {
+            if (isDisable) {
+              button.disabled = true;
+              button.textContent = `Deleting...`;
+            } else {
+              button.disabled = false;
+              button.textContent = `Delete`;
+            }
+          };
+
+          handler(button, comment, disableDeleteButton);
         }
       });
     });

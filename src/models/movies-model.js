@@ -5,7 +5,7 @@ import {getMoviesByFilter} from "../utils/filter";
 const NEED_FILMS_FOR_RANK_FAN = 20;
 const NEED_FILMS_FOR_RANK_NOVICE = 10;
 
-export default class Movies {
+export default class MoviesModel {
   constructor() {
     this._activeFilterType = FilterType.ALL;
 
@@ -59,7 +59,7 @@ export default class Movies {
   }
 
   getFilmsByWatched(periodName = StatsFilter.ALL_TIME) {
-    let filmsInWatchList = this._films.filter((film) => film.isInWatchList);
+    const filmsInWatchList = this._films.filter((film) => film.isWatched);
 
     if (periodName === StatsFilter.ALL_TIME) {
       return filmsInWatchList;
@@ -103,7 +103,7 @@ export default class Movies {
   }
 
   getGenresStatistics(filter) {
-    let genres = {};
+    const genres = {};
 
     this.getFilmsByWatched(filter).forEach((film) => {
       film.genres.forEach((genre) => {
@@ -131,6 +131,6 @@ export default class Movies {
       return total + film.duration;
     }, 0);
 
-    return formatDuration(topDuration);
+    return topDuration > 0 ? formatDuration(topDuration) : `0h 0m`;
   }
 }

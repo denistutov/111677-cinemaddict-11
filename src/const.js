@@ -1,26 +1,16 @@
-export const MONTH_NAMES = [
-  `January`,
-  `February`,
-  `March`,
-  `April`,
-  `May`,
-  `June`,
-  `July`,
-  `August`,
-  `September`,
-  `October`,
-  `November`,
-  `December`,
-];
+const Keycodes = {
+  ESC_KEY: `Escape`,
+  ENTER_KEY: `Enter`,
+};
 
-export const FilterType = {
+const FilterType = {
   ALL: `all`,
   WATCHLIST: `watchlist`,
   HISTORY: `history`,
   FAVORITES: `favorites`,
 };
 
-export const StatsFilter = {
+const StatsFilter = {
   ALL_TIME: `all-time`,
   TODAY: `today`,
   WEEK: `week`,
@@ -28,4 +18,17 @@ export const StatsFilter = {
   YEAR: `year`,
 };
 
-export const AUTHORIZATION = `Basic kjld48s225fe53rej`;
+const ExtraFilmsTitles = {
+  RATED: `Top rated`,
+  COMMENTED: `Most commented`,
+};
+
+const AUTHORIZATION = `Basic kjld48s225fe53rej`;
+
+export {
+  Keycodes,
+  FilterType,
+  StatsFilter,
+  ExtraFilmsTitles,
+  AUTHORIZATION,
+};

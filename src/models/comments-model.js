@@ -1,6 +1,6 @@
 import {formatDateComment} from "../utils/common";
 
-export default class Comments {
+export default class CommentsModel {
   constructor() {
     this._comments = [];
   }
