@@ -176,7 +176,7 @@ export default class FilmDetailsPopup extends AbstractSmartComponent {
   }
 
   recoveryListeners() {
-    this.setClickHandler(this._closeHandler);
+    this.setCloseButtonClickHandler(this._closeHandler);
     this._subscribeOnEvents();
 
     this.setAddToWatchlistClickHandler(this._addToWatchlistHandler);
