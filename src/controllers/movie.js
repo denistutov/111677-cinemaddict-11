@@ -1,9 +1,9 @@
 import {remove, render, replace, RenderPosition} from "../utils/render";
 import {formatDateComment} from "../utils/common";
-import MovieModel from "../models/movie";
+import MovieModel from "../models/movie-model";
 import FilmDetailsPopup from "../components/film-details";
 import FilmCard from "../components/film-card";
-import CommentsModel from "../models/comments";
+import CommentsModel from "../models/comments-model";
 import API from "../api";
 import {AUTHORIZATION, Keycodes} from "../const";
 

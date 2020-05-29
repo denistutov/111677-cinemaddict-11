@@ -5,7 +5,7 @@ import FilmStatistics from "./components/film-statistics";
 import CardsBoardController from "./controllers/cards-board";
 import FilmsSort from "./components/films-sort";
 import FilterController from "./controllers/filter";
-import MoviesModel from "./models/movies";
+import MoviesModel from "./models/movies-model";
 import PageLoading from "./components/page-loading";
 import Statistic from "./components/statistic";
 import API from "./api";

@@ -1,5 +1,5 @@
-import MovieModel from "./models/movie";
-import CommentsModel from "./models/comments";
+import MovieModel from "./models/movie-model";
+import CommentsModel from "./models/comments-model";
 
 const Method = {
   GET: `GET`,
