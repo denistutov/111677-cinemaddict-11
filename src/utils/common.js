@@ -12,8 +12,8 @@ const formatDateComment = (date) => {
 };
 
 const sortObject = (list) => {
-  let sortable = [];
-  for (let key in list) {
+  const sortable = [];
+  for (const key in list) {
     if (Object.prototype.hasOwnProperty.call(list, key)) {
       sortable.push([key, list[key]]);
     }
@@ -31,8 +31,8 @@ const sortObject = (list) => {
     }
   });
 
-  let orderedList = {};
-  for (let idx in sortable) {
+  const orderedList = {};
+  for (const idx in sortable) {
     if (Object.prototype.hasOwnProperty.call(sortable, idx)) {
       orderedList[sortable[idx][0]] = sortable[idx][1];
     }

@@ -59,7 +59,7 @@ export default class MoviesModel {
   }
 
   getFilmsByWatched(periodName = StatsFilter.ALL_TIME) {
-    let filmsInWatchList = this._films.filter((film) => film.isWatched);
+    const filmsInWatchList = this._films.filter((film) => film.isWatched);
 
     if (periodName === StatsFilter.ALL_TIME) {
       return filmsInWatchList;
@@ -103,7 +103,7 @@ export default class MoviesModel {
   }
 
   getGenresStatistics(filter) {
-    let genres = {};
+    const genres = {};
 
     this.getFilmsByWatched(filter).forEach((film) => {
       film.genres.forEach((genre) => {
