@@ -84,7 +84,5 @@ window.addEventListener(`online`, () => {
 window.addEventListener(`load`, () => {
   navigator.serviceWorker.register(`./sw.js`)
     .then(() => {})
-    .catch((err) => {
-      throw err;
-    });
+    .catch(() => {});
 });

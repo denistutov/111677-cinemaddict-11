@@ -5,6 +5,7 @@ import FilmDetailsPopup from "../components/film-details";
 import FilmCard from "../components/film-card";
 import CommentsModel from "../models/comments-model";
 import {Keycodes} from "../const";
+import {isOnline} from "../api/provider";
 
 const SHAKE_ANIMATION_TIMEOUT = 800;
 
@@ -126,6 +127,10 @@ export default class MovieController {
 
     if (oldPopupComponent !== null && this._mode === Mode.OPEN) {
       replace(this._filmDetailsPopupComponent, oldPopupComponent);
+    }
+
+    if (!isOnline()) {
+      this._filmDetailsPopupComponent.disableCommentInputElement();
     }
 
     document.addEventListener(`keydown`, this._onFilmDetailsPopupKeydown);

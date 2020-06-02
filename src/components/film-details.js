@@ -198,7 +198,8 @@ export default class FilmDetailsPopup extends AbstractSmartComponent {
   }
 
   disableCommentInputElement(isDisable = true) {
-    this.getElement().querySelector(`.film-details__comment-input`).disable = isDisable;
+    console.log(`they`);
+    this.getElement().querySelector(`.film-details__comment-input`).disabled = isDisable;
   }
 
   setErrorCommentInputElement(isError = true) {

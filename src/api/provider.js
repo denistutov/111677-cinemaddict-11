@@ -82,7 +82,7 @@ export default class Provider {
 
   addComment(filmData, commentData) {
     if (isOnline()) {
-      return this._api.addComment(filmData.id, commentData);
+      return this._api.addComment(filmData, commentData);
     }
 
     return Promise.reject();
@@ -110,3 +110,5 @@ export default class Provider {
     return Promise.reject(`Sync data failed`);
   }
 }
+
+export {isOnline};
