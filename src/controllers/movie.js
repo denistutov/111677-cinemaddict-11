@@ -4,8 +4,8 @@ import MovieModel from "../models/movie-model";
 import FilmDetailsPopup from "../components/film-details";
 import FilmCard from "../components/film-card";
 import CommentsModel from "../models/comments-model";
-import API from "../api";
-import {AUTHORIZATION, Keycodes} from "../const";
+import {Keycodes} from "../const";
+import {isOnline} from "../api/provider";
 
 const SHAKE_ANIMATION_TIMEOUT = 800;
 
@@ -15,8 +15,10 @@ const Mode = {
 };
 
 export default class MovieController {
-  constructor(container, onDataChange, onViewChange) {
+  constructor(container, onDataChange, onViewChange, api) {
     this._container = container;
+
+    this._api = api;
 
     this._onDataChange = onDataChange;
     this._onViewChange = onViewChange;
@@ -96,7 +98,6 @@ export default class MovieController {
   }
 
   _createFilmDetailsPopup(card) {
-    this._api = new API(AUTHORIZATION);
     this._api.getComments(card.id)
       .then((comments) => {
         const parseComments = this._commentsModel.parseComments(comments);
@@ -126,6 +127,10 @@ export default class MovieController {
 
     if (oldPopupComponent !== null && this._mode === Mode.OPEN) {
       replace(this._filmDetailsPopupComponent, oldPopupComponent);
+    }
+
+    if (!isOnline()) {
+      this._filmDetailsPopupComponent.disableCommentInputElement();
     }
 
     document.addEventListener(`keydown`, this._onFilmDetailsPopupKeydown);

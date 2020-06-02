@@ -32,3 +32,12 @@ export {
   ExtraFilmsTitles,
   AUTHORIZATION,
 };
+
+const STORE_PREFIX = `cinemaddict-localstorage`;
+const STORE_COMMENTS_PREFIX = `cinemaddict-localstorage-comments`;
+
+const STORE_VERSION = `v1`;
+const STORE_COMMENTS_VERSION = `v1`;
+
+export const STORE_NAME = `${STORE_PREFIX}-${STORE_VERSION}`;
+export const STORE_COMMENTS_NAME = `${STORE_COMMENTS_PREFIX}-${STORE_COMMENTS_VERSION}`;

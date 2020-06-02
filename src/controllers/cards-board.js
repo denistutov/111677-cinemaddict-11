@@ -10,9 +10,9 @@ import FilmsExtra from "../components/film-extra";
 const SHOWING_FILM_CARDS_COUNT_ON_START = 5;
 const SHOWING_FILM_CARDS_COUNT_BY_BUTTON = 5;
 
-const renderFilmCards = (cardListElement, cards, onDataChange, onViewChange) => {
+const renderFilmCards = (cardListElement, cards, onDataChange, onViewChange, api) => {
   return cards.map((card) => {
-    const cardController = new MovieController(cardListElement, onDataChange, onViewChange);
+    const cardController = new MovieController(cardListElement, onDataChange, onViewChange, api);
     cardController.render(card);
 
     return cardController;
@@ -77,7 +77,7 @@ export default class CardsBoardController {
   _renderFilmCards(filmCards) {
     const filmsListContainer = this._container.getElement().querySelector(`.films-list__container`);
 
-    const newFilmCards = renderFilmCards(filmsListContainer, filmCards, this._onDataChange, this._onViewChange);
+    const newFilmCards = renderFilmCards(filmsListContainer, filmCards, this._onDataChange, this._onViewChange, this._api);
     this._showedFilmCardsControllers = this._showedFilmCardsControllers.concat(newFilmCards);
     this._showingFilmsCardsCount = this._showedFilmCardsControllers.length;
   }
@@ -95,12 +95,12 @@ export default class CardsBoardController {
 
     if (getTopRatedFilms(filmCards).length > 0) {
       render(this._container.getElement(), this._topRatedFilmsComponent, RenderPosition.BEFOREEND);
-      this._topRatedFilmsControllers = renderFilmCards(this._topRatedFilmsComponent.getFilmsListContainer(), getTopRatedFilms(filmCards), this._onDataChange, this._onViewChange);
+      this._topRatedFilmsControllers = renderFilmCards(this._topRatedFilmsComponent.getFilmsListContainer(), getTopRatedFilms(filmCards), this._onDataChange, this._onViewChange, this._api);
     }
 
     if (getMostCommentedFilms(filmCards).length > 0) {
       render(this._container.getElement(), this._mostCommentedFilmsComponent, RenderPosition.BEFOREEND);
-      this._mostCommentedFilmsControllers = renderFilmCards(this._mostCommentedFilmsComponent.getFilmsListContainer(), getMostCommentedFilms(filmCards), this._onDataChange, this._onViewChange);
+      this._mostCommentedFilmsControllers = renderFilmCards(this._mostCommentedFilmsComponent.getFilmsListContainer(), getMostCommentedFilms(filmCards), this._onDataChange, this._onViewChange, this._api);
     }
   }
 
@@ -124,7 +124,7 @@ export default class CardsBoardController {
 
     const sortedFilmsCards = getSortedFilmCards(this._movieModel.getFilmCards(), this._sortFilmsComponent.getSortType(), prevFilmsCardsCount, this._showingFilmsCardsCount);
 
-    const newFilmCards = renderFilmCards(filmsListContainer, sortedFilmsCards, this._onDataChange, this._onViewChange);
+    const newFilmCards = renderFilmCards(filmsListContainer, sortedFilmsCards, this._onDataChange, this._onViewChange, this._api);
     this._showedFilmCardsControllers = this._showedFilmCardsControllers.concat(newFilmCards);
 
     if (this._showingFilmsCardsCount >= this._movieModel.getFilmCards().length) {

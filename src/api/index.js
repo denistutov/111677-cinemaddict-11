@@ -1,5 +1,5 @@
-import MovieModel from "./models/movie-model";
-import CommentsModel from "./models/comments-model";
+import MovieModel from "../models/movie-model";
+import CommentsModel from "../models/comments-model";
 
 const Method = {
   GET: `GET`,
@@ -11,12 +11,12 @@ const Method = {
 const checkStatus = (response) => {
   if (response.status >= 200 && response.status < 300) {
     return response;
-  } else {
-    throw new Error(`${response.status}: ${response.statusText}`);
   }
+
+  throw new Error(`${response.status}: ${response.statusText}`);
 };
 
-const API = class {
+const Index = class {
   constructor(authorization) {
     this._authorization = authorization;
     this._endPoint = `https://11.ecmascript.pages.academy/cinemaddict/`;
@@ -67,6 +67,16 @@ const API = class {
     });
   }
 
+  sync(films) {
+    return this._load({
+      url: `movies/sync`,
+      method: Method.POST,
+      body: JSON.stringify(films),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+      .then((response) => response.json());
+  }
+
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
     headers.append(`Authorization`, this._authorization);
 
@@ -78,4 +88,4 @@ const API = class {
   }
 };
 
-export default API;
+export default Index;

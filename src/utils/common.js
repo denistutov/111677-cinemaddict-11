@@ -12,12 +12,7 @@ const formatDateComment = (date) => {
 };
 
 const sortObject = (list) => {
-  const sortable = [];
-  for (const key in list) {
-    if (Object.prototype.hasOwnProperty.call(list, key)) {
-      sortable.push([key, list[key]]);
-    }
-  }
+  const sortable = Object.entries(list);
 
   sortable.sort(function (a, b) {
     if (a[1] > b[1]) {
@@ -32,10 +27,8 @@ const sortObject = (list) => {
   });
 
   const orderedList = {};
-  for (const idx in sortable) {
-    if (Object.prototype.hasOwnProperty.call(sortable, idx)) {
-      orderedList[sortable[idx][0]] = sortable[idx][1];
-    }
+  for (const [genre, count] of sortable) {
+    orderedList[genre] = count;
   }
 
   return orderedList;
