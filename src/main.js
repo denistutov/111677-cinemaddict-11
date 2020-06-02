@@ -1,4 +1,5 @@
 import {remove, render, RenderPosition} from "./utils/render";
+import {AUTHORIZATION, STORE_NAME, STORE_COMMENTS_NAME} from "./const";
 import UserRank from "./components/user-rank";
 import FilmListContainer from "./components/film-list-container";
 import FilmStatistics from "./components/film-statistics";
@@ -8,15 +9,19 @@ import FilterController from "./controllers/filter";
 import MoviesModel from "./models/movies-model";
 import PageLoading from "./components/page-loading";
 import Statistic from "./components/statistic";
-import API from "./api";
-import {AUTHORIZATION} from "./const";
+import Index from "./api/index";
+import Store from "./api/store";
+import Provider from "./api/provider";
 
 const pageHeader = document.querySelector(`.header`);
 const pageMain = document.querySelector(`.main`);
 const footerStatistic = document.querySelector(`.footer__statistics`);
 
 const moviesModel = new MoviesModel();
-const api = new API(AUTHORIZATION);
+const api = new Index(AUTHORIZATION);
+const storeFilms = new Store(STORE_NAME, window.localStorage);
+const storeComments = new Store(STORE_COMMENTS_NAME, window.localStorage);
+const apiWithProvider = new Provider(api, storeFilms, storeComments);
 
 const filterController = new FilterController(pageMain, moviesModel);
 const pageLoadingComponent = new PageLoading();
@@ -32,7 +37,7 @@ const afterDataLoad = (filmCards) => {
   const pageHeaderComponent = new UserRank(moviesModel);
 
   const filmStatisticsComponent = new FilmStatistics(moviesModel.getFilmCardsAll());
-  const renderCardsBoard = new CardsBoardController(filmsCardsComponent, sortFilmsComponent, moviesModel, api);
+  const renderCardsBoard = new CardsBoardController(filmsCardsComponent, sortFilmsComponent, moviesModel, apiWithProvider);
 
   renderCardsBoard.render(filmCards);
   filterController.render();
@@ -58,8 +63,28 @@ const afterDataLoad = (filmCards) => {
   remove(pageLoadingComponent);
 };
 
-api.getFilmCards()
+apiWithProvider.getFilmCards()
   .then((filmCards) => {
     moviesModel.setFilmCards(filmCards);
     afterDataLoad(filmCards);
   });
+
+window.addEventListener(`offline`, () => {
+  document.title += ` [offline]`;
+});
+
+window.addEventListener(`online`, () => {
+  document.title = document.title.replace(` [offline]`, ``);
+  if (!apiWithProvider.syncIsNeeded) {
+    return;
+  }
+  apiWithProvider.sync();
+});
+
+window.addEventListener(`load`, () => {
+  navigator.serviceWorker.register(`./sw.js`)
+    .then(() => {})
+    .catch((err) => {
+      throw err;
+    });
+});
